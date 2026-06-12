@@ -596,6 +596,9 @@ input,select{font-family:inherit;}
 
   </div><!-- /page-content -->
 
+  <!-- ═══ MIDI CONNECT BUTTON ═══ -->
+  <button id="midi-connect-btn" onclick="initMidi(true)" style="position:fixed;top:10px;left:12px;z-index:150;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:8px 13px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;touch-action:manipulation;box-shadow:0 2px 8px rgba(0,0,0,0.3);">🎹 Connect MIDI</button>
+
   <!-- ═══ THEME TOGGLE FAB ═══ -->
   <div id="theme-fab">
     <button onclick="setTheme('light',this)" id="fab-light" title="Light mode">☀️</button>
@@ -908,19 +911,42 @@ function playChord(){playChordNow();}
 let midiAccess=null;
 let midiNoteHighlight=null; // callback for pages to receive MIDI notes
 
-function initMidi(){
-  if(!navigator.requestMIDIAccess)return;
-  navigator.requestMIDIAccess().then(access=>{
+let midiStatus='idle'; // idle | connecting | connected | denied | unsupported | nodevice
+
+function initMidi(fromUserTap=false){
+  if(!navigator.requestMIDIAccess){
+    midiStatus='unsupported';
+    updateMidiButton();
+    if(fromUserTap)alert('This browser does not support MIDI. Use Chrome on Android for MIDI input.');
+    return;
+  }
+  midiStatus='connecting';updateMidiButton();
+  navigator.requestMIDIAccess({sysex:false}).then(access=>{
     midiAccess=access;
-    const inputs=[...access.inputs.values()];
-    if(inputs.length>0)showMidiBar(inputs[0].name);
-    inputs.forEach(input=>{input.onmidimessage=handleMidi;});
-    access.onstatechange=e=>{
+    const bind=()=>{
       const ins=[...access.inputs.values()];
-      if(ins.length>0){showMidiBar(ins[0].name);ins.forEach(i=>{i.onmidimessage=handleMidi;});}
-      else hideMidiBar();
+      ins.forEach(i=>{i.onmidimessage=handleMidi;});
+      if(ins.length>0){midiStatus='connected';showMidiBar(ins[0].name);}
+      else {midiStatus='nodevice';hideMidiBar();}
+      updateMidiButton();
     };
-  }).catch(()=>{});
+    bind();
+    access.onstatechange=bind;
+    if(fromUserTap && [...access.inputs.values()].length===0){
+      alert('MIDI access granted, but no keyboard detected. Check the USB cable and that the keyboard is on.');
+    }
+  }).catch(err=>{
+    midiStatus='denied';updateMidiButton();hideMidiBar();
+    if(fromUserTap)alert('MIDI permission was blocked. In Chrome: tap the ⋮ menu → Site settings → MIDI → Allow, then tap Connect MIDI again.');
+  });
+}
+
+function updateMidiButton(){
+  const btn=document.getElementById('midi-connect-btn');
+  if(!btn)return;
+  const labels={idle:'🎹 Connect MIDI',connecting:'⏳ Connecting…',connected:'🎹 MIDI ✓',denied:'🎹 MIDI blocked — tap to retry',unsupported:'🎹 MIDI unsupported',nodevice:'🎹 No keyboard — tap to rescan'};
+  btn.textContent=labels[midiStatus]||labels.idle;
+  btn.style.color = midiStatus==='connected' ? 'var(--green)' : (midiStatus==='denied'?'var(--red)':'var(--text2)');
 }
 
 function handleMidi(msg){
@@ -2968,6 +2994,7 @@ function initTheme(){
 initTheme();
 updateHomeStats();
 initMidi();
+requestAnimationFrame(updateMidiButton);
 </script>
 </body>
 </html>
