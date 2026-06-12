@@ -2133,8 +2133,9 @@ function renderPlayAlong(){
         <button class="pa-preset" onclick="paFindSheet('ultimate')"><h4>🎸 Ultimate Guitar</h4><p>Chords &amp; tabs</p></button>
         <button class="pa-preset" onclick="paFindSheet('musescore')"><h4>🎼 MuseScore</h4><p>Sheet music + MIDI</p></button>
         <button class="pa-preset" onclick="paFindSheet('chordie')"><h4>🎵 Chordie</h4><p>Chord sheets</p></button>
-        <button class="pa-preset" onclick="paFindSheet('8notes')"><h4>🎹 8notes</h4><p>Free piano sheets</p></button>
+        <button class="pa-preset" onclick="paFindSheet('pianosheet')"><h4>🎹 Piano Sheets</h4><p>Free piano PDFs</p></button>
         <button class="pa-preset" onclick="paFindSheet('freemidi')"><h4>🎧 FreeMidi</h4><p>MIDI files</p></button>
+        <button class="pa-preset" onclick="paFindSheet('chordify')"><h4>🎹 Chordify</h4><p>Auto chords (browser)</p></button>
         <button class="pa-preset" onclick="paFindSheet('youtube')"><h4>▶️ YouTube</h4><p>Watch &amp; follow</p></button>
       </div>
     </div>
@@ -2179,8 +2180,9 @@ function paFindSheet(site){
     case 'ultimate':  url='https://www.ultimate-guitar.com/search.php?search_type=title&value='+enc; break;
     case 'chordie':   url='https://www.chordie.com/results.php?q='+enc; break;
     case 'musescore': url='https://musescore.com/sheetmusic?text='+enc; break;
-    case '8notes':    url='https://www.8notes.com/search/?s='+enc; break;
+    case 'pianosheet': url='https://www.google.com/search?q='+encodeURIComponent((raw||q)+' free piano sheet music pdf'); break;
     case 'freemidi':  url='https://freemidi.org/search?q='+enc; break;
+    case 'chordify':  url='https://chordify.net/search/'+encodeURIComponent(raw||q); break;
     case 'youtube':   url='https://www.youtube.com/results?search_query='+encodeURIComponent((raw||q)+' chords lyrics'); break;
     default: url='https://www.ultimate-guitar.com/search.php?value='+enc;
   }
@@ -2685,9 +2687,12 @@ function renderListen(){
     <div class="piano-wrap"><div class="piano-keyboard" id="listen-piano"></div></div>
 
     <div class="listen-hint">
-      Works best with the keyboard as the loudest sound. If a backing track is playing
-      loudly in the same room, use headphones for it so the mic mainly hears your playing.
-      Single notes detect most reliably; full chords are harder for any mic to read.
+      Works best with the keyboard as the loudest sound, playing <strong>one note at a time</strong>.
+      Detection now ignores quiet/ambiguous sounds and waits for a clear, steady pitch —
+      so background noise is filtered out. Full chords remain hard for any mic to read.
+      <br><br>The slight delay you may hear is normal: it's the gap between the tablet's own
+      synth sound and your mixer's speakers. To avoid it, mute the app's own sound while
+      using the Listener, or play only through one source.
     </div>
   `;
   updateListenKeyboard();
@@ -2738,31 +2743,35 @@ function stopListen(){
 
 // Autocorrelation pitch detection — robust for single notes
 function autoCorrelate(buf, sampleRate){
-  let SIZE=buf.length;
+  const SIZE=buf.length;
   let rms=0;
   for(let i=0;i<SIZE;i++){rms+=buf[i]*buf[i];}
   rms=Math.sqrt(rms/SIZE);
-  if(rms<0.01) return -1; // too quiet
+  // Stricter volume gate — ignores quiet bleed/background
+  if(rms<0.025) return {freq:-1, clarity:0};
 
   let r1=0, r2=SIZE-1, thres=0.2;
   for(let i=0;i<SIZE/2;i++){ if(Math.abs(buf[i])<thres){r1=i;break;} }
   for(let i=1;i<SIZE/2;i++){ if(Math.abs(buf[SIZE-i])<thres){r2=SIZE-i;break;} }
   const b=buf.slice(r1,r2);
   const newSize=b.length;
+  if(newSize<2) return {freq:-1, clarity:0};
   const cc=new Array(newSize).fill(0);
   for(let i=0;i<newSize;i++)
     for(let j=0;j<newSize-i;j++)
       cc[i]+=b[j]*b[j+i];
-  let d=0; while(cc[d]>cc[d+1])d++;
+  let d=0; while(d<newSize-1 && cc[d]>cc[d+1])d++;
   let maxval=-1, maxpos=-1;
   for(let i=d;i<newSize;i++){ if(cc[i]>maxval){maxval=cc[i];maxpos=i;} }
+  // Clarity = how strong the peak is vs the zero-lag energy (0..1).
+  // Low clarity = noisy / polyphonic / ambiguous → we reject it.
+  const clarity = cc[0]>0 ? maxval/cc[0] : 0;
   let T0=maxpos;
-  // parabolic interpolation for accuracy
   const x1=cc[T0-1]||0, x2=cc[T0]||0, x3=cc[T0+1]||0;
   const a=(x1+x3-2*x2)/2, bb=(x3-x1)/2;
   if(a) T0=T0-bb/(2*a);
-  if(T0===0) return -1;
-  return sampleRate/T0;
+  if(T0===0) return {freq:-1, clarity:0};
+  return {freq:sampleRate/T0, clarity};
 }
 
 function freqToMidiCents(freq){
@@ -2772,22 +2781,32 @@ function freqToMidiCents(freq){
   return {midi, cents};
 }
 
+let listenStableMidi=-1, listenStableCount=0;
+
 function detectPitchLoop(){
   if(!listenActive||!listenAnalyser){return;}
   listenAnalyser.getFloatTimeDomainData(listenBuf);
-  const freq=autoCorrelate(listenBuf, listenCtx.sampleRate);
+  const {freq, clarity}=autoCorrelate(listenBuf, listenCtx.sampleRate);
 
   const noteEl=document.getElementById('lt-note');
   const freqEl=document.getElementById('lt-freq');
   const needle=document.getElementById('lt-needle');
   const centsEl=document.getElementById('lt-cents');
 
-  if(freq>0 && freq<2000){
+  // Require a CLEAR single pitch: good clarity AND sensible piano range.
+  // Clarity below ~0.9 usually means noise or several notes at once → reject.
+  const clear = freq>0 && freq<2000 && clarity>0.9;
+
+  if(clear){
     const {midi,cents}=freqToMidiCents(freq);
+    // Stability filter: only accept a note once it's held steady for a few frames.
+    if(midi===listenStableMidi){ listenStableCount++; }
+    else { listenStableMidi=midi; listenStableCount=0; }
+    if(listenStableCount<2){ listenRAF=requestAnimationFrame(detectPitchLoop); return; }
     const name=NOTE_NAMES_SHARP[midi%12];
     const octave=Math.floor(midi/12)-1;
     if(noteEl){noteEl.textContent=name+octave;noteEl.classList.add('active');}
-    if(freqEl)freqEl.textContent=freq.toFixed(1)+' Hz';
+    if(freqEl)freqEl.textContent=freq.toFixed(1)+' Hz · '+Math.round(clarity*100)+'% clear';
     // needle: -50..+50 cents → 0..100%
     if(needle){
       const pct=Math.max(0,Math.min(100,50+cents));
@@ -2810,6 +2829,7 @@ function detectPitchLoop(){
     }
   } else {
     if(noteEl)noteEl.classList.remove('active');
+    listenStableCount=0;
     if(listenLastMidi!==-1){
       document.querySelectorAll('#listen-piano .piano-key.pressed').forEach(k=>k.classList.remove('pressed'));
       listenLastMidi=-1;
