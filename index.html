@@ -276,9 +276,89 @@ input,select{font-family:inherit;}
 #install-no{background:transparent;color:rgba(0,0,0,0.5);font-size:18px;padding:2px 6px;}
 
 /* ═══════════════════════ RESPONSIVE ═══════════════════════ */
+
+/* ═══════════════════════ PLAY ALONG ═══════════════════════ */
+.playalong-container{padding:12px 16px;display:flex;flex-direction:column;gap:12px;}
+.pa-key-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.pa-controls{display:flex;gap:8px;margin-bottom:12px;}
+.pa-controls>*{flex:1;}
+.pa-reference{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+.pa-ref-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.pa-ref-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);width:100%;margin-bottom:2px;}
+.pa-note-chip{padding:6px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-size:14px;font-weight:700;color:var(--text);}
+.pa-note-chip.root{background:rgba(240,192,64,0.15);border-color:var(--gold);color:var(--gold);}
+.pa-chord-chip{padding:6px 11px;background:rgba(74,158,232,0.1);border:1px solid #2A6898;border-radius:7px;font-size:13px;font-weight:700;color:var(--accent);}
+.pa-search-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:linear-gradient(135deg,#FF0000 0%,#CC0000 100%);border-radius:var(--radius);color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation;border:none;}
+.pa-search-btn:active{opacity:0.88;}
+.pa-search-btn svg{width:22px;height:22px;}
+.pa-preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pa-preset{padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all 0.15s;touch-action:manipulation;text-align:left;}
+.pa-preset:active{transform:scale(0.97);}
+.pa-preset h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.pa-preset p{font-size:10px;color:var(--text2);}
+.pa-note{font-size:11px;color:var(--text3);text-align:center;line-height:1.5;padding:0 8px;}
+
+
+/* ═══════════════════════ LEAD SHEET ═══════════════════════ */
+.leadsheet-container{padding:12px 16px;display:flex;flex-direction:column;gap:12px;}
+.ls-meta-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.ls-meta-row{display:flex;gap:8px;margin-bottom:8px;}
+.ls-meta-row>*{flex:1;}
+.ls-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:4px;}
+.ls-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:9px 12px;font-size:14px;font-weight:600;}
+.ls-input:focus{outline:none;border-color:var(--accent);}
+.ls-chord-builder{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.ls-add-row{display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap;}
+.ls-add-row .ls-field{flex:1;min-width:70px;}
+.ls-add-btn{padding:9px 16px;background:var(--accent);border-radius:var(--radius-sm);color:#fff;font-weight:800;font-size:14px;border:none;cursor:pointer;touch-action:manipulation;white-space:nowrap;}
+.ls-add-btn:active{opacity:0.85;}
+.ls-bars{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px;}
+.ls-bar{min-height:54px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;position:relative;cursor:pointer;}
+.ls-bar-num{position:absolute;top:2px;left:4px;font-size:8px;color:var(--text3);font-weight:700;}
+.ls-bar-chord{margin-top:10px;padding:3px 7px;background:rgba(240,192,64,0.15);border:1px solid var(--gold2);border-radius:5px;font-size:13px;font-weight:800;color:var(--gold);height:fit-content;}
+.ls-bar.empty{align-items:center;justify-content:center;color:var(--text3);font-size:10px;}
+.ls-toolbar{display:flex;gap:8px;flex-wrap:wrap;}
+.ls-tool-btn{flex:1;min-width:90px;padding:11px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:center;gap:6px;}
+.ls-tool-btn:active{transform:scale(0.97);}
+.ls-tool-btn.print{background:linear-gradient(135deg,var(--gold) 0%,var(--orange) 100%);color:#0D1B2A;border:none;}
+.ls-tool-btn.danger{color:var(--red);border-color:rgba(232,80,80,0.4);}
+.ls-quick-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.ls-quick-chip{padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;touch-action:manipulation;}
+.ls-quick-chip:active{background:rgba(74,158,232,0.15);}
+.ls-lyrics-input{width:100%;min-height:80px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 12px;font-size:13px;line-height:1.6;resize:vertical;font-family:inherit;}
+.ls-lyrics-input:focus{outline:none;border-color:var(--accent);}
+.ls-hint{font-size:11px;color:var(--text3);line-height:1.5;}
+
+
+/* ═══════════════════════ LEARN WALKTHROUGH ═══════════════════════ */
+.learn-container{padding:0;}
+.learn-stage{display:flex;flex-direction:column;align-items:center;padding:8px 16px 4px;}
+#learn-svg{width:100%;max-width:340px;height:auto;user-select:none;}
+.learn-text-card{margin:4px 16px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-height:120px;}
+.learn-step-num{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:8px;}
+.learn-title{font-size:19px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;}
+.learn-body{font-size:14px;line-height:1.6;color:var(--text2);}
+.learn-body strong{color:var(--text);font-weight:700;}
+.learn-body .hl-gold{color:var(--gold);font-weight:700;}
+.learn-body .hl-blue{color:var(--accent);font-weight:700;}
+.learn-nav{display:flex;gap:8px;padding:0 16px 12px;}
+.learn-nav button{flex:1;padding:13px;border-radius:var(--radius);font-size:14px;font-weight:800;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:var(--bg2);color:var(--text);}
+.learn-nav button:active{transform:scale(0.98);}
+.learn-nav button.primary{background:linear-gradient(135deg,var(--gold) 0%,var(--orange) 100%);color:#0D1B2A;border:none;}
+.learn-nav button:disabled{opacity:0.35;pointer-events:none;}
+.learn-dots{display:flex;justify-content:center;gap:6px;padding:4px 0 12px;}
+.learn-dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all 0.2s;}
+.learn-dot.active{background:var(--gold);width:20px;border-radius:4px;}
+.learn-video-card{margin:0 16px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.learn-video-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;background:linear-gradient(135deg,#FF0000 0%,#CC0000 100%);border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.learn-video-btn:active{opacity:0.88;}
+.learn-video-btn svg{width:20px;height:20px;}
+.learn-replay{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--accent);background:none;border:none;cursor:pointer;margin-top:8px;}
+
 @media(min-width:600px){
   .home-grid{grid-template-columns:repeat(3,1fr);}
   .home-card.wide{grid-column:span 3;}
+  .ls-bars{grid-template-columns:repeat(8,1fr);}
   .answer-grid-ear,.answers-grid{grid-template-columns:repeat(4,1fr);}
   .diatonic-grid{grid-template-columns:repeat(7,1fr);}
   #cof-svg{max-width:460px;}
@@ -313,15 +393,18 @@ input,select{font-family:inherit;}
         </div>
       </div>
       <div class="home-grid">
-        <div class="home-card wide" onclick="nav('circle')">
-          <span class="hc-icon">⭕</span>
-          <div><h3>Circle of Fifths</h3><p>Interactive wheel — tap any key to explore relationships</p></div>
+        <div class="home-card wide" onclick="nav('learn')">
+          <span class="hc-icon">💡</span>
+          <div><h3>Learn the Circle of Fifths</h3><p>New here? Start with the animated walkthrough — the simple idea explained step by step</p></div>
         </div>
-        <div class="home-card" onclick="nav('ear')"><span class="hc-icon">👂</span><h3>Ear Training</h3><p>Beginner to advanced</p></div>
+        <div class="home-card" onclick="nav('circle')"><span class="hc-icon">⭕</span><h3>Circle of 5ths</h3><p>Interactive wheel</p></div>
         <div class="home-card" onclick="nav('scales')"><span class="hc-icon">🎼</span><h3>Scales</h3><p>20 scale types</p></div>
         <div class="home-card" onclick="nav('chords')"><span class="hc-icon">🎹</span><h3>Chords</h3><p>40+ chord types</p></div>
+        <div class="home-card" onclick="nav('ear')"><span class="hc-icon">👂</span><h3>Ear Training</h3><p>Beginner to advanced</p></div>
         <div class="home-card" onclick="nav('practice')"><span class="hc-icon">🏆</span><h3>Practice</h3><p>Theory challenges</p></div>
         <div class="home-card" onclick="nav('keysig')"><span class="hc-icon">♯</span><h3>Key Sigs</h3><p>All 12 keys</p></div>
+        <div class="home-card" onclick="nav('playalong')"><span class="hc-icon">▶️</span><h3>Play Along</h3><p>Backing tracks by key</p></div>
+        <div class="home-card" onclick="nav('leadsheet')"><span class="hc-icon">📄</span><h3>Lead Sheet</h3><p>Build &amp; print charts</p></div>
       </div>
       <div class="home-stats">
         <div class="stat-card"><div class="stat-val" id="stat-q">0</div><div class="stat-lbl">Questions</div></div>
@@ -333,13 +416,22 @@ input,select{font-family:inherit;}
 
     <!-- ═══ CIRCLE OF FIFTHS ═══ -->
     <div id="page-circle" class="page">
-      <div class="page-header"><h1>Circle of Fifths</h1><p>Tap any segment to explore the key</p></div>
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div><h1>Circle of Fifths</h1><p>Tap any segment to explore the key</p></div>
+        <button onclick="nav('learn')" style="background:rgba(240,192,64,0.15);border:1px solid var(--gold2);color:var(--gold);border-radius:20px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;touch-action:manipulation;">💡 Learn</button>
+      </div>
       <div class="circle-container">
         <svg id="cof-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"></svg>
         <div class="key-info-panel" id="key-info-panel">
           <div style="text-align:center;color:var(--text3);padding:18px 0;font-size:13px;">Tap a segment above</div>
         </div>
       </div>
+    </div>
+
+    <!-- ═══ LEARN: Circle of Fifths walkthrough ═══ -->
+    <div id="page-learn" class="page">
+      <div class="page-header"><h1>Understanding the Circle</h1><p>The simple idea behind the Circle of Fifths</p></div>
+      <div class="learn-container" id="learn-container"></div>
     </div>
 
     <!-- ═══ KEY SIGNATURES ═══ -->
@@ -441,6 +533,18 @@ input,select{font-family:inherit;}
     <div id="page-practice" class="page">
       <div class="page-header"><h1>Theory Practice</h1><p>Music theory questions &amp; note reading</p></div>
       <div class="practice-container" id="practice-container"></div>
+    </div>
+
+    <!-- ═══ PLAY ALONG ═══ -->
+    <div id="page-playalong" class="page">
+      <div class="page-header"><h1>Play Along</h1><p>Find backing tracks &amp; jam in any key</p></div>
+      <div class="playalong-container" id="playalong-container"></div>
+    </div>
+
+    <!-- ═══ LEAD SHEET CREATOR ═══ -->
+    <div id="page-leadsheet" class="page">
+      <div class="page-header"><h1>Lead Sheet</h1><p>Build &amp; print your own chord chart</p></div>
+      <div class="leadsheet-container" id="leadsheet-container"></div>
     </div>
 
   </div><!-- /page-content -->
@@ -785,7 +889,7 @@ function hideMidiBar(){document.getElementById('midi-bar').classList.remove('sho
 // ═══════════════════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════════════════
-const PAGES=['home','circle','keysig','scales','chords','ear','practice'];
+const PAGES=['home','circle','keysig','scales','chords','ear','practice','playalong','leadsheet','learn'];
 let currentPage='home';
 let cofBuilt=false;
 let currentChordType='major';
@@ -804,6 +908,9 @@ function nav(page){
   if(page==='keysig')buildKSGrid('all');
   if(page==='ear')initEarTraining();
   if(page==='practice')initPractice();
+  if(page==='playalong')initPlayAlong();
+  if(page==='leadsheet')initLeadSheet();
+  if(page==='learn')initLearn();
   if(page==='home')updateHomeStats();
 }
 
@@ -1718,6 +1825,15 @@ let pracState={diff:'medium',total:10,qIdx:0,correct:0,answered:false,questions:
 
 function initPractice(){if(!pracState.questions.length)renderPracStart();}
 
+function resetPracStats(){
+  const p=load();
+  // Clear only theory-practice stats; leave ear training bests intact
+  delete p.q; delete p.c; delete p.streak; delete p.bestStreak;
+  save(p);
+  if(typeof updateHomeStats==='function') updateHomeStats();
+  renderPracStart();
+}
+
 function renderPracStart(){
   const s=getStats();
   const pct=s.q?Math.round(s.c/s.q*100):0;
@@ -1727,6 +1843,9 @@ function renderPracStart(){
       <div class="score-box"><div class="sb-val" style="color:var(--green)">${s.c}</div><div class="sb-lbl">Correct</div></div>
       <div class="score-box"><div class="sb-val" style="color:var(--gold)">${pct}%</div><div class="sb-lbl">Accuracy</div></div>
       <div class="score-box"><div class="sb-val" style="color:var(--orange)">${s.s}</div><div class="sb-lbl">Best Streak</div></div>
+      <div class="score-box" style="display:flex;flex-direction:column;justify-content:center;padding:0;">
+        <button onclick="resetPracStats()" style="width:100%;height:100%;background:transparent;border:none;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;padding:12px 4px;text-transform:uppercase;letter-spacing:0.05em;">↺ Reset</button>
+      </div>
     </div>
     <div>
       <div class="section-label" style="margin-bottom:8px;">Difficulty</div>
@@ -1741,7 +1860,6 @@ function renderPracStart(){
       <div class="chip-row">${[5,10,15,20].map(n=>`<div class="chip${pracState.total===n?' active':''}" onclick="setPracTotal(${n},this)">${n}</div>`).join('')}</div>
     </div>
     <button class="next-btn" onclick="startPrac()">Start Practice</button>
-    ${s.q>0?`<button class="restart-btn" style="margin-top:8px;width:100%;" onclick="save({});updateHomeStats();renderPracStart()">Reset Stats</button>`:''}
   `;
 }
 
@@ -1879,6 +1997,529 @@ if('serviceWorker'in navigator){
 }
 
 // ═══════════════════════════════════════════════════════
+// PLAY ALONG — backing track finder + key reference
+// ═══════════════════════════════════════════════════════
+let paRoot='C', paType='major';
+
+function initPlayAlong(){ renderPlayAlong(); }
+
+function renderPlayAlong(){
+  const container=document.getElementById('playalong-container');
+  if(!container)return;
+  const scale=buildScale(paRoot,paType);
+  const dia=getDiatonic(paRoot, paType==='major'?'major':'naturalMinor');
+  const typeLabel = paType==='major'?'Major':'Minor';
+
+  container.innerHTML=`
+    <div class="pa-key-section">
+      <div class="section-label" style="margin-bottom:8px;">Choose your key</div>
+      <div class="pa-controls">
+        <select class="select-styled" id="pa-root" onchange="paUpdate()">
+          ${['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'].map(n=>`<option ${n===paRoot?'selected':''}>${n}</option>`).join('')}
+        </select>
+        <select class="select-styled" id="pa-type" onchange="paUpdate()">
+          <option value="major" ${paType==='major'?'selected':''}>Major</option>
+          <option value="naturalMinor" ${paType==='naturalMinor'?'selected':''}>Minor</option>
+        </select>
+      </div>
+      <div class="pa-reference">
+        <div class="pa-ref-row">
+          <span class="pa-ref-label">Scale notes</span>
+          ${scale.map((n,i)=>`<span class="pa-note-chip${i===0?' root':''}">${n}</span>`).join('')}
+        </div>
+        <div class="pa-ref-row">
+          <span class="pa-ref-label">Chords in this key</span>
+          ${dia.map(ch=>`<span class="pa-chord-chip">${ch.root}${CHORDS[ch.quality]?.symbol||''}</span>`).join('')}
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;">
+        <button class="play-btn" style="flex:1;justify-content:center;" onclick="paPlayScale()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>Hear Scale
+        </button>
+      </div>
+    </div>
+
+    <button class="pa-search-btn" onclick="paOpenYouTube('backing')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.9-.5-5.8c-.3-1-1-1.8-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.5c-1 .3-1.7 1-2 2C1 8.1 1 12 1 12s0 3.9.5 5.8c.3 1 1 1.8 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.5c1-.3 1.7-1 2-2C23 15.9 23 12 23 12zM10 15.5v-7l6 3.5-6 3.5z"/></svg>
+      Find ${paRoot} ${typeLabel} Backing Tracks
+    </button>
+
+    <div class="section-label" style="margin-top:4px;">Quick searches on YouTube</div>
+    <div class="pa-preset-grid">
+      <button class="pa-preset" onclick="paOpenYouTube('backing')"><h4>🎸 Backing Track</h4><p>Jam over a ${paRoot} ${typeLabel} groove</p></button>
+      <button class="pa-preset" onclick="paOpenYouTube('blues')"><h4>🎵 Blues Jam</h4><p>${paRoot} blues backing track</p></button>
+      <button class="pa-preset" onclick="paOpenYouTube('slow')"><h4>🌙 Slow Ballad</h4><p>Slow tempo in ${paRoot}</p></button>
+      <button class="pa-preset" onclick="paOpenYouTube('lesson')"><h4>📚 Lesson</h4><p>Learn songs in ${paRoot} ${typeLabel}</p></button>
+    </div>
+
+    <div class="pa-note">
+      Tracks open in YouTube. Keep this page open on a second device, or split-screen,
+      to see your scale &amp; chords while you play.
+    </div>
+  `;
+}
+
+function paUpdate(){
+  paRoot=document.getElementById('pa-root').value;
+  paType=document.getElementById('pa-type').value;
+  renderPlayAlong();
+}
+
+function paPlayScale(){
+  // Reuse the corrected ascending scale player
+  let m=noteNameToMidi(paRoot,4);
+  const sc=SCALES[paType]; if(!sc)return;
+  const midis=[m]; for(const step of sc.intervals){ m+=step; midis.push(m); }
+  const seq = midis.length>8 ? [...midis.slice(0,7), midis[0]+12] : midis;
+  seq.forEach((midi,i)=>setTimeout(()=>playNote(midiToFreq(midi),0.5,0.3), i*200));
+}
+
+function paOpenYouTube(kind){
+  const typeLabel = paType==='major'?'major':'minor';
+  let query;
+  switch(kind){
+    case 'blues':  query=`${paRoot} blues backing track`; break;
+    case 'slow':   query=`${paRoot} ${typeLabel} slow backing track`; break;
+    case 'lesson': query=`songs in ${paRoot} ${typeLabel} key tutorial`; break;
+    default:       query=`${paRoot} ${typeLabel} backing track play along`;
+  }
+  const url='https://www.youtube.com/results?search_query='+encodeURIComponent(query);
+  window.open(url,'_blank','noopener');
+}
+
+// ═══════════════════════════════════════════════════════
+// LEAD SHEET CREATOR — build, hear & print chord charts
+// ═══════════════════════════════════════════════════════
+let lsData={
+  title:'', artist:'', key:'C', keyType:'major',
+  timeSig:'4/4', tempo:'', bars:Array(16).fill(null), lyrics:''
+};
+let lsActiveBar=0;
+
+function initLeadSheet(){ renderLeadSheet(); }
+
+function lsDiatonicChips(){
+  const dia=getDiatonic(lsData.key, lsData.keyType==='major'?'major':'naturalMinor');
+  return dia.map(ch=>{
+    const sym=ch.root+(CHORDS[ch.quality]?.symbol||'');
+    return `<span class="ls-quick-chip" onclick="lsAddChord('${sym}')">${sym}</span>`;
+  }).join('');
+}
+
+function renderLeadSheet(){
+  const c=document.getElementById('leadsheet-container');
+  if(!c)return;
+  c.innerHTML=`
+    <div class="ls-meta-card">
+      <div class="ls-meta-row">
+        <div class="ls-field" style="flex:2;">
+          <label>Song Title</label>
+          <input class="ls-input" id="ls-title" placeholder="Untitled" value="${lsData.title.replace(/"/g,'&quot;')}" oninput="lsData.title=this.value">
+        </div>
+      </div>
+      <div class="ls-meta-row">
+        <div class="ls-field">
+          <label>Artist</label>
+          <input class="ls-input" id="ls-artist" placeholder="—" value="${lsData.artist.replace(/"/g,'&quot;')}" oninput="lsData.artist=this.value">
+        </div>
+        <div class="ls-field">
+          <label>Tempo (BPM)</label>
+          <input class="ls-input" id="ls-tempo" placeholder="120" value="${lsData.tempo}" oninput="lsData.tempo=this.value" inputmode="numeric">
+        </div>
+      </div>
+      <div class="ls-meta-row">
+        <div class="ls-field">
+          <label>Key</label>
+          <select class="ls-input" id="ls-key" onchange="lsData.key=this.value;renderLeadSheet()">
+            ${['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'].map(n=>`<option ${n===lsData.key?'selected':''}>${n}</option>`).join('')}
+          </select>
+        </div>
+        <div class="ls-field">
+          <label>Quality</label>
+          <select class="ls-input" id="ls-keytype" onchange="lsData.keyType=this.value;renderLeadSheet()">
+            <option value="major" ${lsData.keyType==='major'?'selected':''}>Major</option>
+            <option value="naturalMinor" ${lsData.keyType==='naturalMinor'?'selected':''}>Minor</option>
+          </select>
+        </div>
+        <div class="ls-field">
+          <label>Time Sig</label>
+          <select class="ls-input" id="ls-time" onchange="lsData.timeSig=this.value">
+            ${['4/4','3/4','6/8','2/4','12/8','5/4'].map(t=>`<option ${t===lsData.timeSig?'selected':''}>${t}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="ls-chord-builder">
+      <div class="section-label" style="margin-bottom:8px;">Add chord to bar ${lsActiveBar+1}</div>
+      <div class="ls-add-row">
+        <div class="ls-field">
+          <label>Root</label>
+          <select class="ls-input" id="ls-chord-root">
+            ${['C','C♯','D♭','D','E♭','E','F','F♯','G♭','G','A♭','A','B♭','B'].map(n=>`<option>${n}</option>`).join('')}
+          </select>
+        </div>
+        <div class="ls-field">
+          <label>Type</label>
+          <select class="ls-input" id="ls-chord-type">
+            <option value="">maj</option><option value="m">min</option>
+            <option value="7">7</option><option value="maj7">maj7</option>
+            <option value="m7">m7</option><option value="dim">dim</option>
+            <option value="sus4">sus4</option><option value="sus2">sus2</option>
+            <option value="6">6</option><option value="m6">m6</option>
+            <option value="9">9</option><option value="add9">add9</option>
+          </select>
+        </div>
+        <div class="ls-field">
+          <label>Bass (slash)</label>
+          <select class="ls-input" id="ls-chord-bass">
+            <option value="">—</option>
+            ${['C','C♯','D♭','D','E♭','E','F','F♯','G♭','G','A♭','A','B♭','B'].map(n=>`<option>${n}</option>`).join('')}
+          </select>
+        </div>
+        <button class="ls-add-btn" onclick="lsAddFromBuilder()">+ Add</button>
+      </div>
+      <div class="section-label" style="margin:12px 0 4px;">Quick: chords in ${lsData.key} ${lsData.keyType==='major'?'major':'minor'}</div>
+      <div class="ls-quick-chips">${lsDiatonicChips()}</div>
+    </div>
+
+    <div class="ls-bars" id="ls-bars">
+      ${lsData.bars.map((ch,i)=>`
+        <div class="ls-bar ${ch?'':'empty'} ${i===lsActiveBar?'active':''}" onclick="lsSelectBar(${i})" style="${i===lsActiveBar?'border-color:var(--accent);':''}">
+          <span class="ls-bar-num">${i+1}</span>
+          ${ch?`<span class="ls-bar-chord" onclick="event.stopPropagation();lsRemoveChord(${i})">${ch}</span>`:'+'}
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="ls-toolbar">
+      <button class="ls-tool-btn" onclick="lsPlayProgression()">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>Play
+      </button>
+      <button class="ls-tool-btn" onclick="lsAddBars()">+ 4 Bars</button>
+      <button class="ls-tool-btn danger" onclick="lsClear()">Clear</button>
+    </div>
+
+    <div class="ls-meta-card">
+      <div class="section-label" style="margin-bottom:6px;">Lyrics / Notes (your own)</div>
+      <textarea class="ls-lyrics-input" id="ls-lyrics" placeholder="Type your own lyrics or notes here…" oninput="lsData.lyrics=this.value">${lsData.lyrics.replace(/</g,'&lt;')}</textarea>
+      <div class="ls-hint" style="margin-top:6px;">Type your own transcription. Don't paste copyrighted lyrics if you plan to share the sheet publicly.</div>
+    </div>
+
+    <button class="ls-tool-btn print" onclick="lsPrint()" style="width:100%;padding:15px;font-size:15px;">
+      🖨️ Print / Save as PDF
+    </button>
+    <div class="ls-hint" style="text-align:center;">Tip: in the print dialog choose "Save as PDF" to keep it on your tablet.</div>
+  `;
+  // restore active bar selector value if present
+}
+
+function lsSelectBar(i){ lsActiveBar=i; renderLeadSheet(); }
+
+function lsAddFromBuilder(){
+  const root=document.getElementById('ls-chord-root').value;
+  const type=document.getElementById('ls-chord-type').value;
+  const bass=document.getElementById('ls-chord-bass').value;
+  let sym=root+type;
+  if(bass && bass!==root) sym+='/'+bass;
+  lsAddChord(sym);
+}
+
+function lsAddChord(sym){
+  lsData.bars[lsActiveBar]=sym;
+  // auto-advance to next empty bar
+  if(lsActiveBar < lsData.bars.length-1) lsActiveBar++;
+  renderLeadSheet();
+  lsPlayChordSymbol(sym);
+}
+
+function lsRemoveChord(i){
+  lsData.bars[i]=null;
+  lsActiveBar=i;
+  renderLeadSheet();
+}
+
+function lsAddBars(){
+  lsData.bars=[...lsData.bars, null,null,null,null];
+  renderLeadSheet();
+}
+
+function lsClear(){
+  if(!confirm('Clear all chords and lyrics?'))return;
+  lsData.bars=Array(16).fill(null);
+  lsData.lyrics='';
+  lsActiveBar=0;
+  renderLeadSheet();
+}
+
+// Parse a chord symbol like "G7/B" or "Am" or "C♯maj7" into root + bass
+function lsParseSymbol(sym){
+  const slash=sym.split('/');
+  const main=slash[0];
+  const bass=slash[1]||null;
+  const m=main.match(/^([A-G][♯♭]?)(.*)$/);
+  if(!m)return null;
+  return {root:m[1], qual:m[2], bass};
+}
+
+function lsQualToType(qual){
+  const map={'':'major','m':'minor','7':'dom7','maj7':'maj7','m7':'min7','dim':'dim','sus4':'sus4','sus2':'sus2','6':'maj6','m6':'min6','9':'dom9','add9':'add9'};
+  return map[qual]!==undefined?map[qual]:'major';
+}
+
+function lsPlayChordSymbol(sym){
+  const p=lsParseSymbol(sym); if(!p)return;
+  const type=lsQualToType(p.qual);
+  const cd=CHORDS[type]; if(!cd)return;
+  const rootMidi=noteNameToMidi(p.root,4);
+  // bass note an octave lower if slash chord
+  if(p.bass){ playNote(midiToFreq(noteNameToMidi(p.bass,3)),1.2,0.25); }
+  cd.intervals.forEach(iv=>playNote(midiToFreq(rootMidi+iv),1.2,0.2));
+}
+
+function lsPlayProgression(){
+  const chords=lsData.bars.filter(Boolean);
+  if(!chords.length)return;
+  chords.forEach((sym,i)=>setTimeout(()=>lsPlayChordSymbol(sym), i*900));
+}
+
+function lsPrint(){
+  const title=lsData.title||'Untitled';
+  const artist=lsData.artist||'';
+  const keyLabel=lsData.key+' '+(lsData.keyType==='major'?'Major':'Minor');
+  const bars=lsData.bars;
+  const beatsPerBar=parseInt(lsData.timeSig.split('/')[0])||4;
+
+  // Build bar grid HTML, 4 bars per line
+  let barsHtml='';
+  for(let i=0;i<bars.length;i+=4){
+    const row=bars.slice(i,i+4);
+    barsHtml+='<div class="pbar-row">'+row.map(ch=>
+      `<div class="pbar">${ch?`<span class="pbar-chord">${ch}</span>`:''}</div>`
+    ).join('')+'</div>';
+  }
+
+  const lyricsHtml=lsData.lyrics
+    ? '<div class="plyrics"><h3>Lyrics / Notes</h3><pre>'+lsData.lyrics.replace(/</g,'&lt;')+'</pre></div>'
+    : '';
+
+  const win=window.open('','_blank');
+  if(!win){alert('Please allow pop-ups to print.');return;}
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title} — Lead Sheet</title>
+  <style>
+    @page{margin:1.5cm;}
+    body{font-family:Georgia,'Times New Roman',serif;color:#111;max-width:800px;margin:0 auto;padding:20px;}
+    .phead{text-align:center;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:20px;}
+    .phead h1{font-size:28px;margin:0 0 4px;}
+    .phead .partist{font-size:16px;color:#444;font-style:italic;margin:0 0 8px;}
+    .pmeta{display:flex;justify-content:center;gap:24px;font-size:14px;font-weight:bold;}
+    .pmeta span{padding:2px 0;}
+    .pbar-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:0;}
+    .pbar{border:1px solid #111;border-right:none;min-height:56px;padding:8px;display:flex;align-items:center;}
+    .pbar-row .pbar:last-child{border-right:1px solid #111;}
+    .pbar-row:first-of-type .pbar{border-top:2px solid #111;}
+    .pbar-chord{font-size:20px;font-weight:bold;font-family:Arial,sans-serif;}
+    .pbars{margin:20px 0;}
+    .plyrics{margin-top:28px;border-top:1px solid #999;padding-top:16px;}
+    .plyrics h3{font-size:15px;margin:0 0 8px;}
+    .plyrics pre{font-family:Georgia,serif;font-size:14px;line-height:1.7;white-space:pre-wrap;margin:0;}
+    .pfoot{margin-top:30px;text-align:center;font-size:11px;color:#999;border-top:1px solid #ccc;padding-top:8px;}
+  </style></head><body>
+    <div class="phead">
+      <h1>${title}</h1>
+      ${artist?`<p class="partist">${artist}</p>`:''}
+      <div class="pmeta">
+        <span>Key: ${keyLabel}</span>
+        <span>Time: ${lsData.timeSig}</span>
+        ${lsData.tempo?`<span>♩ = ${lsData.tempo}</span>`:''}
+      </div>
+    </div>
+    <div class="pbars">${barsHtml}</div>
+    ${lyricsHtml}
+    <div class="pfoot">Created with KeyMaster Pro · by MusicAppsUK</div>
+  </body></html>`);
+  win.document.close();
+  setTimeout(()=>{win.focus();win.print();},350);
+}
+
+// ═══════════════════════════════════════════════════════
+// LEARN — animated Circle of Fifths walkthrough
+// ═══════════════════════════════════════════════════════
+let learnStep=0;
+
+// Each step: title, body (HTML), and how many circle positions to reveal,
+// plus an optional "play" action that sounds notes to illustrate the point.
+const LEARN_STEPS=[
+  {
+    title:"It's just a clock",
+    body:"The Circle of Fifths is laid out like a <strong>clock face</strong>. There are 12 positions — one for each of the 12 musical notes. At the very top, in the 12 o'clock spot, sits <span class='hl-gold'>C major</span> — the key with no sharps and no flats.",
+    reveal:1, highlightTop:true,
+    play:()=>playNoteByName('C',4,0.8,0.3)
+  },
+  {
+    title:"Step right by a fifth",
+    body:"Now the magic. Count up <strong>five letters</strong> from C: C-D-E-F-<span class='hl-gold'>G</span>. That's a 'fifth'. Move one step <strong>clockwise</strong> and you land on <span class='hl-gold'>G major</span>. Each clockwise step jumps up another fifth.",
+    reveal:2,
+    play:()=>{playNoteByName('C',4,0.5,0.3);setTimeout(()=>playNoteByName('G',4,0.7,0.3),350);}
+  },
+  {
+    title:"Add one sharp at a time",
+    body:"Here's why musicians love it. C has <strong>0 sharps</strong>. Step to G — it has <span class='hl-blue'>1 sharp</span>. Step to D — <span class='hl-blue'>2 sharps</span>. Every clockwise step simply <strong>adds one more sharp</strong> to the key signature. The circle counts them for you.",
+    reveal:4,
+    play:()=>['C','G','D','A'].forEach((n,i)=>setTimeout(()=>playNoteByName(n,4,0.5,0.28),i*300))
+  },
+  {
+    title:"Go the other way for flats",
+    body:"Travel <strong>anti-clockwise</strong> from C instead and you add <span class='hl-gold'>flats</span> one at a time: F has 1 flat, B♭ has 2 flats, E♭ has 3… So one direction sharpens, the other flattens. Simple and symmetrical.",
+    reveal:4, showFlats:true,
+    play:()=>['C','F','B♭','E♭'].forEach((n,i)=>setTimeout(()=>playNoteByName(n,4,0.5,0.28),i*300))
+  },
+  {
+    title:"The inner ring: minor keys",
+    body:"Each major key has a <strong>relative minor</strong> that shares the very same notes. They live on the <strong>inner ring</strong>. C major pairs with <span class='hl-gold'>A minor</span> — count down three semitones from C and you reach A. Same notes, different home.",
+    reveal:6, showMinors:true,
+    play:()=>{playNoteByName('C',4,0.5,0.3);setTimeout(()=>playNoteByName('A',4,0.7,0.3),350);}
+  },
+  {
+    title:"Neighbours sound good together",
+    body:"Keys that sit <strong>next to each other</strong> share almost all their notes, so they sound natural together. That's why countless songs use the chords <span class='hl-gold'>C – G – F</span> — they're all neighbours on the circle. Now you can <em>see</em> why music works.",
+    reveal:12,
+    play:()=>['C','G','F'].forEach((n,i)=>setTimeout(()=>{const ch=buildChord(n,'major');ch.forEach(x=>playNoteByName(x,4,0.9,0.2));},i*700))
+  },
+  {
+    title:"That's the whole secret",
+    body:"<strong>Clockwise = up a fifth, add a sharp. Anti-clockwise = add a flat.</strong> Inner ring holds the relative minors, and neighbours play nicely together. One simple picture ties together every key in music. Tap below to explore the full interactive wheel.",
+    reveal:12, full:true
+  },
+];
+
+function initLearn(){ learnStep=0; renderLearn(); }
+
+function drawLearnCircle(revealCount, opts={}){
+  const svg=document.getElementById('learn-svg');
+  if(!svg)return;
+  svg.innerHTML='';
+  svg.setAttribute('viewBox','0 0 400 400');
+  const cx=200,cy=200,rO=180,rM=120,rIn=72,rC=38;
+  const col=getComputedStyle(document.documentElement);
+  const lineCol=col.getPropertyValue('--border').trim()||'#2A4A6A';
+
+  svg.appendChild(svgEl('circle',{cx,cy,r:rO,fill:'transparent',stroke:lineCol,'stroke-width':1}));
+
+  // Order of reveal: clockwise from C. For flats we still reveal but emphasise direction.
+  for(let i=0;i<12;i++){
+    const a0=(-90+i*30)*Math.PI/180, a1=(-90+(i+1)*30)*Math.PI/180;
+    const am=(-90+(i+0.5)*30)*Math.PI/180;
+    const key=CIRCLE[i];
+    const isRevealed = i < revealCount || (opts.showFlats && i>=7) ;
+    // For flats step we want to light the anticlockwise side (F,B♭,E♭,A♭ = indices 11,10,9,8)
+    let lit = i < revealCount;
+    if(opts.showFlats){ lit = (i<revealCount) || [11,10,9,8].includes(i) && i>= (12-revealCount+1); }
+    const baseCol = KEY_COLORS[i];
+    const faded = !lit && !opts.full;
+
+    // Outer major segment
+    const op=svgEl('path',{
+      d:arcPath(cx,cy,rM,rO,a0,a1),
+      fill:baseCol,
+      opacity: faded?'0.12':'0.85',
+      stroke:'#0D1B2A','stroke-width':'2'
+    });
+    svg.appendChild(op);
+    if(!faded){
+      const mt=svgEl('text',{x:cx+Math.cos(am)*((rM+rO)/2),y:cy+Math.sin(am)*((rM+rO)/2)+1,'text-anchor':'middle','dominant-baseline':'middle',fill:'#0D1B2A','font-size':'15','font-weight':'800','font-family':'Inter,sans-serif'});
+      mt.textContent=key.major;svg.appendChild(mt);
+    }
+
+    // Inner minor ring (only when asked)
+    if(opts.showMinors){
+      const ip=svgEl('path',{d:arcPath(cx,cy,rC,rIn,a0,a1),fill:baseCol,opacity:faded?'0.08':'0.4',stroke:'#0D1B2A','stroke-width':'2'});
+      svg.appendChild(ip);
+      if(!faded){
+        const it=svgEl('text',{x:cx+Math.cos(am)*((rC+rIn)/2),y:cy+Math.sin(am)*((rC+rIn)/2)+1,'text-anchor':'middle','dominant-baseline':'middle',fill:'rgba(255,255,255,0.9)','font-size':'10','font-weight':'700','font-family':'Inter,sans-serif'});
+        it.textContent=key.minor;svg.appendChild(it);
+      }
+    }
+  }
+
+  // Top highlight marker (the "12 o'clock" pointer)
+  if(opts.highlightTop){
+    svg.appendChild(svgEl('path',{d:`M 200 8 L 192 26 L 208 26 Z`,fill:'#F0C040'}));
+  }
+
+  // Direction arrows
+  if(revealCount>=2 && !opts.full && !opts.showMinors){
+    if(opts.showFlats){
+      // anticlockwise arrow on left
+      svg.appendChild(svgEl('path',{d:'M 110 70 A 150 150 0 0 0 70 120',fill:'none',stroke:'#F0C040','stroke-width':'3','marker-end':'url(#arrowG)'}));
+    } else {
+      // clockwise arrow on right
+      svg.appendChild(svgEl('path',{d:'M 290 70 A 150 150 0 0 1 330 120',fill:'none',stroke:'#4A9EE8','stroke-width':'3','marker-end':'url(#arrowB)'}));
+    }
+    // arrowhead defs
+    const defs=svgEl('defs',{});
+    defs.innerHTML=`
+      <marker id="arrowB" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#4A9EE8"/></marker>
+      <marker id="arrowG" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M8,0 L0,4 L8,8 Z" fill="#F0C040"/></marker>`;
+    svg.appendChild(defs);
+  }
+
+  // Centre
+  svg.appendChild(svgEl('circle',{cx,cy,r:opts.showMinors?rC-2:rM-0.5,fill:'transparent',stroke:'none'}));
+  if(!opts.showMinors){
+    const ct=svgEl('text',{x:cx,y:cy+5,'text-anchor':'middle','dominant-baseline':'middle',fill:col.getPropertyValue('--text3').trim()||'#5A7898','font-size':'13','font-weight':'800','font-family':'Inter,sans-serif'});
+    ct.textContent='C is 12 o\u2019clock';
+    if(opts.full||revealCount>=12){ct.textContent='';}
+    svg.appendChild(ct);
+  }
+}
+
+function renderLearn(){
+  const c=document.getElementById('learn-container');
+  if(!c)return;
+  const step=LEARN_STEPS[learnStep];
+  const isLast=learnStep===LEARN_STEPS.length-1;
+  const isFirst=learnStep===0;
+
+  c.innerHTML=`
+    <div class="learn-stage">
+      <svg id="learn-svg" viewBox="0 0 400 400"></svg>
+    </div>
+    <div class="learn-dots">
+      ${LEARN_STEPS.map((_,i)=>`<div class="learn-dot${i===learnStep?' active':''}"></div>`).join('')}
+    </div>
+    <div class="learn-text-card">
+      <span class="learn-step-num">Step ${learnStep+1} of ${LEARN_STEPS.length}</span>
+      <div class="learn-title">${step.title}</div>
+      <div class="learn-body">${step.body}</div>
+      ${step.play?`<button class="learn-replay" onclick="learnPlay()"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Hear it</button>`:''}
+    </div>
+    <div class="learn-nav">
+      <button onclick="learnPrev()" ${isFirst?'disabled':''}>← Back</button>
+      ${isLast
+        ? `<button class="primary" onclick="nav('circle')">Explore the wheel →</button>`
+        : `<button class="primary" onclick="learnNext()">Next →</button>`}
+    </div>
+    <div class="learn-video-card">
+      <div class="section-label" style="margin-bottom:8px;">Prefer to watch?</div>
+      <button class="learn-video-btn" onclick="window.open('https://www.youtube.com/results?search_query=circle+of+fifths+explained+simply','_blank','noopener')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.9-.5-5.8c-.3-1-1-1.8-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.5c-1 .3-1.7 1-2 2C1 8.1 1 12 1 12s0 3.9.5 5.8c.3 1 1 1.8 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.5c1-.3 1.7-1 2-2C23 15.9 23 12 23 12zM10 15.5v-7l6 3.5-6 3.5z"/></svg>
+        Watch a video explainer
+      </button>
+    </div>
+  `;
+  // draw the circle for this step
+  drawLearnCircle(step.reveal, step);
+  // auto-play the sound illustration shortly after the visual settles
+  if(step.play) setTimeout(()=>step.play(),400);
+}
+
+function learnPlay(){ const s=LEARN_STEPS[learnStep]; if(s.play)s.play(); }
+function learnNext(){ if(learnStep<LEARN_STEPS.length-1){learnStep++;renderLearn();} }
+function learnPrev(){ if(learnStep>0){learnStep--;renderLearn();} }
+
+// ═══════════════════════════════════════════════════════
+// THEME MANAGEMENT// ═══════════════════════════════════════════════════════
 // THEME MANAGEMENT
 // ═══════════════════════════════════════════════════════
 function setTheme(mode, btn){
