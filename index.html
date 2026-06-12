@@ -327,7 +327,7 @@ input,select{font-family:inherit;}
         <div class="stat-card"><div class="stat-val" id="stat-q">0</div><div class="stat-lbl">Questions</div></div>
         <div class="stat-card"><div class="stat-val" id="stat-c">0</div><div class="stat-lbl">Correct</div></div>
         <div class="stat-card"><div class="stat-val" id="stat-s">0</div><div class="stat-lbl">Best Streak</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-e">0</div><div class="stat-lbl">Ear Score</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-e">0%</div><div class="stat-lbl">Best Ear</div></div>
       </div>
     </div>
 
@@ -813,18 +813,21 @@ function nav(page){
 const SK='keyMasterPro';
 function load(){try{return JSON.parse(localStorage.getItem(SK))||{};}catch{return{};}}
 function save(d){try{localStorage.setItem(SK,JSON.stringify(d));}catch{}}
-function getStats(){const p=load();return{q:p.q||0,c:p.c||0,s:p.bestStreak||0,e:p.earScore||0};}
+function getStats(){const p=load();return{q:p.q||0,c:p.c||0,s:p.bestStreak||0,e:p.earScore||0,earBest:p.earBest||0,earSessions:p.earSessions||0};}
 function updateStats(correct,isEar=false){
   const p=load();
   p.q=(p.q||0)+1;
   if(correct){p.c=(p.c||0)+1;p.streak=(p.streak||0)+1;if(p.streak>(p.bestStreak||0))p.bestStreak=p.streak;}
   else p.streak=0;
-  if(isEar&&correct)p.earScore=(p.earScore||0)+1;
   save(p);updateHomeStats();
 }
 function updateHomeStats(){
   const s=getStats();
-  ['q','c','s','e'].forEach((k,i)=>{const el=document.getElementById('stat-'+k);if(el)el.textContent=s[k];});
+  const el=id=>document.getElementById(id);
+  if(el('stat-q'))el('stat-q').textContent=s.q;
+  if(el('stat-c'))el('stat-c').textContent=s.c;
+  if(el('stat-s'))el('stat-s').textContent=s.s;
+  if(el('stat-e'))el('stat-e').textContent=(s.earBest||0)+'%';
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1353,13 +1356,24 @@ function initEarTraining(){
   if(!earState.active)renderEarStart();
 }
 
+function resetEarStats(){
+  const p=load();
+  delete p.earScore; delete p.earBest; delete p.earSessions;
+  save(p);
+  if(typeof updateHomeStats==='function') updateHomeStats();
+  renderEarStart();
+}
+
 function renderEarStart(){
   const c=document.getElementById('ear-container');
   const s=load();
   c.innerHTML=`
     <div class="score-row">
-      <div class="score-box"><div class="sb-val" style="color:var(--purple)">${s.earScore||0}</div><div class="sb-lbl">Ear Score</div></div>
-      <div class="score-box"><div class="sb-val">${s.q||0}</div><div class="sb-lbl">Questions</div></div>
+      <div class="score-box"><div class="sb-val" style="color:var(--purple)">${s.earBest||0}%</div><div class="sb-lbl">Best Score</div></div>
+      <div class="score-box"><div class="sb-val">${s.earSessions||0}</div><div class="sb-lbl">Sessions</div></div>
+      <div class="score-box" style="display:flex;flex-direction:column;justify-content:center;padding:0;">
+        <button onclick="resetEarStats()" style="width:100%;height:100%;background:transparent;border:none;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;padding:12px 4px;text-transform:uppercase;letter-spacing:0.05em;">↺ Reset</button>
+      </div>
     </div>
     <div>
       <div class="section-label" style="margin-bottom:8px;">Skill Level</div>
@@ -1673,6 +1687,12 @@ function answerEar(answer){
 function renderEarComplete(){
   const{correct,total}=earState;
   const pct=Math.round(correct/total*100);
+  // Record lifetime stats: best score % and session count
+  const p=load();
+  p.earSessions=(p.earSessions||0)+1;
+  if(pct>(p.earBest||0)) p.earBest=pct;
+  save(p);
+  if(typeof updateHomeStats==='function') updateHomeStats();
   const grade=pct>=90?'Perfect pitch! 🎵':pct>=70?'Great ear! 👂':pct>=50?'Good effort! 🎼':'Keep listening! 📻';
   document.getElementById('ear-container').innerHTML=`
     <div class="session-complete">
