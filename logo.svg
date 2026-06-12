@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0D1B2A"/>
+      <stop offset="100%" stop-color="#162D45"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F8D060"/>
+      <stop offset="50%" stop-color="#F0C040"/>
+      <stop offset="100%" stop-color="#E89040"/>
+    </linearGradient>
+  </defs>
+  <!-- rounded background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- outer circle of fifths ring -->
+  <circle cx="256" cy="240" r="150" fill="none" stroke="url(#gold)" stroke-width="14" opacity="0.85"/>
+  <!-- 12 tick marks around the ring -->
+  <g stroke="url(#gold)" stroke-width="8" stroke-linecap="round" opacity="0.7">
+    <line x1="256" y1="98" x2="256" y2="118"/>
+    <line x1="327" y1="117" x2="317" y2="134"/>
+    <line x1="379" y1="169" x2="362" y2="179"/>
+    <line x1="398" y1="240" x2="378" y2="240"/>
+    <line x1="379" y1="311" x2="362" y2="301"/>
+    <line x1="327" y1="363" x2="317" y2="346"/>
+    <line x1="256" y1="382" x2="256" y2="362"/>
+    <line x1="185" y1="363" x2="195" y2="346"/>
+    <line x1="133" y1="311" x2="150" y2="301"/>
+    <line x1="114" y1="240" x2="134" y2="240"/>
+    <line x1="133" y1="169" x2="150" y2="179"/>
+    <line x1="185" y1="117" x2="195" y2="134"/>
+  </g>
+  <!-- central treble clef -->
+  <text x="256" y="320" font-size="220" fill="url(#gold)" font-family="Georgia, serif" text-anchor="middle">&#119070;</text>
+  <!-- wordmark -->
+  <text x="256" y="446" font-size="58" font-weight="800" fill="#F0C040" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="-1">KeyMaster</text>
+  <text x="256" y="486" font-size="26" font-weight="600" fill="#8BAAC8" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="3">PRO</text>
+</svg>
