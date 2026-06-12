@@ -693,25 +693,39 @@ function playNoteByName(name,octave=4,dur=0.8,vol=0.3){
 
 function playChordNow(){
   const root=document.getElementById('chord-root')?.value||'C';
-  const notes=buildChord(root,currentChordType);
-  notes.forEach((n,i)=>setTimeout(()=>playNoteByName(n,4,1.2,0.25),0));
+  const cd=CHORDS[currentChordType]; if(!cd)return;
+  const rootMidi=noteNameToMidi(root,4);
+  // Use raw semitone intervals so extensions (9th=14, 13th=21) voice ABOVE the root
+  cd.intervals.forEach(iv=>playNote(midiToFreq(rootMidi+iv),1.2,0.22));
 }
 
 function playScaleNow(descending=false){
   const root=document.getElementById('scale-root')?.value||'C';
   const type=document.getElementById('scale-type')?.value||'major';
-  const base=buildScale(root,type);
-  // Full 8 notes: 7 scale degrees + octave (root at octave above)
-  let notes8=base.length>=7
-    ? [...base.slice(0,7), base[0]]
-    : [...base, base[0]];
-  if(descending) notes8=[...notes8].reverse();
-  notes8.forEach((n,i)=>{
-    // Octave note (index 7 ascending, index 0 descending) plays at octave 5
-    const isOctaveNote = descending ? i===0 : i===7;
-    const oct = isOctaveNote ? 5 : 4;
-    setTimeout(()=>playNoteByName(n, oct, 0.55, 0.3), i*210);
+  const sc=SCALES[type]; if(!sc)return;
+  const rootMidi=noteNameToMidi(root,4);
+  // Build continuously-ascending MIDI numbers from cumulative intervals:
+  // root, root+i1, root+i1+i2, ... up to the octave. Always rises, never wraps down.
+  const midis=[rootMidi];
+  let m=rootMidi;
+  for(const step of sc.intervals){ m+=step; midis.push(m); }
+  // midis now ends exactly one octave (or scale span) above the root.
+  // Take first 8 for 7-note scales; shorter scales (pentatonic) keep all + octave.
+  let seq = midis.length>8 ? [...midis.slice(0,7), rootMidi+12] : midis;
+  if(descending) seq=[...seq].reverse();
+  seq.forEach((midi,i)=>{
+    setTimeout(()=>playNote(midiToFreq(midi),0.55,0.3), i*210);
   });
+}
+
+// Play any scale type ascending correctly (no octave wrap), incl. octave note
+function playScaleAsc(root, type, noteGap=180, dur=0.45, vol=0.27){
+  const sc=SCALES[type]; if(!sc)return;
+  let m=noteNameToMidi(root,4);
+  const midis=[m];
+  for(const step of sc.intervals){ m+=step; midis.push(m); }
+  const seq = midis.length>8 ? [...midis.slice(0,7), midis[0]+12] : midis;
+  seq.forEach((midi,i)=>setTimeout(()=>playNote(midiToFreq(midi),dur,vol), i*noteGap));
 }
 function playScale(){playScaleNow(false);}
 function playScaleDescending(){playScaleNow(true);}
@@ -1442,7 +1456,7 @@ function genEarMajMinScale(){
   return{
     prompt:'Listen to this scale. Major or Natural Minor?',
     type:'Scale Type',
-    play:()=>notes.forEach((n,i)=>setTimeout(()=>playNoteByName(n,4,0.4,0.25),i*180)),
+    play:()=>playScaleAsc(root,type,180),
     correct:isMajor?'Major':'Natural Minor',
     options:shuffle(['Major','Natural Minor']),
     notes
@@ -1515,7 +1529,7 @@ function genEarScale(){
   return{
     prompt:'Identify this scale.',
     type:'Scale',
-    play:()=>notes.forEach((n,i)=>setTimeout(()=>playNoteByName(n,4,0.4,0.25),i*160)),
+    play:()=>playScaleAsc(root,chosen[0],160),
     correct:chosen[1],
     options:shuffle([chosen[1],...wrong]),
     notes
@@ -1570,7 +1584,7 @@ function genEarExoticScale(){
   return{
     prompt:'Identify this exotic scale.',
     type:'Exotic Scale',
-    play:()=>notes.forEach((n,i)=>setTimeout(()=>playNoteByName(n,4,0.4,0.25),i*180)),
+    play:()=>playScaleAsc(root,chosen[0],180),
     correct:chosen[1],
     options:shuffle([chosen[1],...wrong]),
     notes
