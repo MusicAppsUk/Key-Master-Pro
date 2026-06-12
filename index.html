@@ -159,6 +159,15 @@ input,select{font-family:inherit;}
 .bkey:active,.bkey.pressed{background:linear-gradient(180deg,#2a4a6a 0%,#1a3050 100%);}
 .bkey.in-scale{background:linear-gradient(180deg,#1a3a5a 0%,#0a2040 100%);border-color:var(--accent);color:var(--accent);}
 .bkey.root-note{background:linear-gradient(180deg,#806000 0%,#604000 100%);border-color:var(--gold);color:var(--gold);}
+/* MIDI / tap 'played' state — must win over in-scale & root-note (defined above) */
+.wkey.pressed,.wkey.in-scale.pressed,.wkey.root-note.pressed{
+  background:linear-gradient(180deg,#7ef0a0 0%,#3ad070 100%)!important;
+  border-color:#2aa050!important;color:#0a4020!important;
+}
+.bkey.pressed,.bkey.in-scale.pressed,.bkey.root-note.pressed{
+  background:linear-gradient(180deg,#2a9a4a 0%,#157a30 100%)!important;
+  border-color:#3ad070!important;color:#fff!important;
+}
 .bkey.highlighted{background:linear-gradient(180deg,#1a5a2a 0%,#0a3a1a 100%);border-color:var(--green);}
 
 /* ═══════════════════════ CIRCLE OF FIFTHS ═══════════════════════ */
@@ -355,6 +364,40 @@ input,select{font-family:inherit;}
 .learn-video-btn svg{width:20px;height:20px;}
 .learn-replay{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--accent);background:none;border:none;cursor:pointer;margin-top:8px;}
 
+
+/* ═══════════════════════ NOTE LISTENER ═══════════════════════ */
+.listen-container{padding:14px 16px;display:flex;flex-direction:column;gap:14px;}
+.listen-tuner{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;text-align:center;}
+.lt-note{font-size:64px;font-weight:900;line-height:1;letter-spacing:-0.03em;color:var(--text3);transition:color 0.1s;}
+.lt-note.active{color:var(--gold);}
+.lt-freq{font-size:13px;color:var(--text3);margin-top:6px;}
+.lt-meter{margin:18px auto 4px;width:100%;max-width:300px;height:48px;position:relative;}
+.lt-meter-track{position:absolute;top:50%;left:0;right:0;height:4px;background:var(--bg3);border-radius:2px;transform:translateY(-50%);}
+.lt-meter-center{position:absolute;top:8px;bottom:8px;left:50%;width:2px;background:var(--green);transform:translateX(-50%);}
+.lt-needle{position:absolute;top:4px;width:4px;height:40px;background:var(--gold);border-radius:2px;left:50%;transform:translateX(-50%);transition:left 0.08s,background 0.08s;box-shadow:0 0 8px rgba(240,192,64,0.5);}
+.lt-cents{font-size:12px;font-weight:700;margin-top:6px;}
+.lt-cents.flat{color:var(--accent);}
+.lt-cents.sharp{color:var(--orange);}
+.lt-cents.intune{color:var(--green);}
+.listen-status{display:flex;align-items:center;gap:10px;justify-content:center;font-size:13px;font-weight:600;}
+.listen-toggle{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:var(--radius);font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation;border:none;transition:all 0.15s;}
+.listen-toggle.start{background:linear-gradient(135deg,var(--green) 0%,#2a9a4a 100%);color:#fff;}
+.listen-toggle.stop{background:linear-gradient(135deg,var(--red) 0%,#c82020 100%);color:#fff;}
+.listen-toggle svg{width:20px;height:20px;}
+.listen-hint{font-size:11px;color:var(--text3);line-height:1.5;text-align:center;padding:0 8px;}
+.listen-mic-dot{width:10px;height:10px;border-radius:50%;background:var(--text3);}
+.listen-mic-dot.live{background:var(--red);animation:pulse 1.2s infinite;}
+.listen-scale-row{display:flex;gap:8px;align-items:center;}
+.listen-scale-row select{flex:1;}
+
+
+/* Lead sheet finder — prominent song search */
+.pa-sheet-finder{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.pa-song-input{width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:13px 14px;font-size:16px;font-weight:600;margin-bottom:8px;transition:border-color 0.15s;}
+.pa-song-input:focus{outline:none;border-color:var(--accent);}
+.pa-search-all{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:linear-gradient(135deg,var(--gold) 0%,var(--orange) 100%);border:none;border-radius:var(--radius-sm);color:#0D1B2A;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.pa-search-all:active{opacity:0.88;}
+
 @media(min-width:600px){
   .home-grid{grid-template-columns:repeat(3,1fr);}
   .home-card.wide{grid-column:span 3;}
@@ -393,10 +436,7 @@ input,select{font-family:inherit;}
         </div>
       </div>
       <div class="home-grid">
-        <div class="home-card wide" onclick="nav('learn')">
-          <span class="hc-icon">💡</span>
-          <div><h3>Learn the Circle of Fifths</h3><p>New here? Start with the animated walkthrough — the simple idea explained step by step</p></div>
-        </div>
+        <div class="home-card" onclick="nav('learn')"><span class="hc-icon">💡</span><h3>Learn the Circle</h3><p>Animated lesson</p></div>
         <div class="home-card" onclick="nav('circle')"><span class="hc-icon">⭕</span><h3>Circle of 5ths</h3><p>Interactive wheel</p></div>
         <div class="home-card" onclick="nav('scales')"><span class="hc-icon">🎼</span><h3>Scales</h3><p>20 scale types</p></div>
         <div class="home-card" onclick="nav('chords')"><span class="hc-icon">🎹</span><h3>Chords</h3><p>40+ chord types</p></div>
@@ -405,6 +445,7 @@ input,select{font-family:inherit;}
         <div class="home-card" onclick="nav('keysig')"><span class="hc-icon">♯</span><h3>Key Sigs</h3><p>All 12 keys</p></div>
         <div class="home-card" onclick="nav('playalong')"><span class="hc-icon">▶️</span><h3>Play Along</h3><p>Backing tracks by key</p></div>
         <div class="home-card" onclick="nav('leadsheet')"><span class="hc-icon">📄</span><h3>Lead Sheet</h3><p>Build &amp; print charts</p></div>
+        <div class="home-card" onclick="nav('listen')"><span class="hc-icon">🎤</span><h3>Note Listener</h3><p>Detect notes by mic</p></div>
       </div>
       <div class="home-stats">
         <div class="stat-card"><div class="stat-val" id="stat-q">0</div><div class="stat-lbl">Questions</div></div>
@@ -432,6 +473,12 @@ input,select{font-family:inherit;}
     <div id="page-learn" class="page">
       <div class="page-header"><h1>Understanding the Circle</h1><p>The simple idea behind the Circle of Fifths</p></div>
       <div class="learn-container" id="learn-container"></div>
+    </div>
+
+    <!-- ═══ NOTE LISTENER (microphone pitch detection) ═══ -->
+    <div id="page-listen" class="page">
+      <div class="page-header"><h1>Note Listener</h1><p>Plays through your mic — hear a note, see it light up</p></div>
+      <div class="listen-container" id="listen-container"></div>
     </div>
 
     <!-- ═══ KEY SIGNATURES ═══ -->
@@ -864,6 +911,7 @@ function handleMidi(msg){
     playNote(midiToFreq(note),0.8,velocity/127*0.4);
     if(midiNoteHighlight)midiNoteHighlight(note,true);
     highlightMidiOnPiano(note,true);
+    showMidiNote(note);
   } else if(type===0x80||(type===0x90&&velocity===0)){
     // Note Off
     if(midiNoteHighlight)midiNoteHighlight(note,false);
@@ -872,11 +920,30 @@ function handleMidi(msg){
 }
 
 function highlightMidiOnPiano(midiNote,on){
-  document.querySelectorAll('.piano-key[data-midi]').forEach(el=>{
-    if(parseInt(el.dataset.midi)%12===midiNote%12){
-      el.classList.toggle('pressed',on);
-    }
+  // Only light keys on the currently-visible page's keyboard.
+  const activePage=document.querySelector('.page.active');
+  if(!activePage)return;
+  const keys=activePage.querySelectorAll('.piano-key[data-midi]');
+  // Prefer an exact MIDI match (right octave). If the played note is outside
+  // the on-screen range, fall back to matching the pitch-class so it still shows.
+  let exact=false;
+  keys.forEach(el=>{ if(parseInt(el.dataset.midi)===midiNote) exact=true; });
+  keys.forEach(el=>{
+    const m=parseInt(el.dataset.midi);
+    const match = exact ? (m===midiNote) : (m%12===midiNote%12);
+    if(match) el.classList.toggle('pressed',on);
   });
+}
+
+function showMidiNote(midiNote){
+  const lbl=document.getElementById('midi-label');
+  if(!lbl)return;
+  const names=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+  const nm=names[midiNote%12]+(Math.floor(midiNote/12)-1);
+  lbl.dataset.base=lbl.dataset.base||lbl.textContent;
+  lbl.textContent=lbl.dataset.base+'  ·  ♪ '+nm;
+  clearTimeout(window._midiNoteTimer);
+  window._midiNoteTimer=setTimeout(()=>{lbl.textContent=lbl.dataset.base;},1200);
 }
 
 function showMidiBar(name){
@@ -889,7 +956,7 @@ function hideMidiBar(){document.getElementById('midi-bar').classList.remove('sho
 // ═══════════════════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════════════════
-const PAGES=['home','circle','keysig','scales','chords','ear','practice','playalong','leadsheet','learn'];
+const PAGES=['home','circle','keysig','scales','chords','ear','practice','playalong','leadsheet','learn','listen'];
 let currentPage='home';
 let cofBuilt=false;
 let currentChordType='major';
@@ -911,6 +978,8 @@ function nav(page){
   if(page==='playalong')initPlayAlong();
   if(page==='leadsheet')initLeadSheet();
   if(page==='learn')initLearn();
+  if(page==='listen')initListen();
+  if(page!=='listen')stopListen();
   if(page==='home')updateHomeStats();
 }
 
@@ -2052,9 +2121,28 @@ function renderPlayAlong(){
       <button class="pa-preset" onclick="paOpenYouTube('lesson')"><h4>📚 Lesson</h4><p>Learn songs in ${paRoot} ${typeLabel}</p></button>
     </div>
 
+    <div class="pa-sheet-finder">
+      <div class="section-label" style="margin-bottom:8px;">🔍 Find lead sheets for a song</div>
+      <input class="pa-song-input" id="pa-song" placeholder="Type a song name or artist…" value="${paSong.replace(/"/g,'&quot;')}" oninput="paSong=this.value" onkeydown="if(event.key==='Enter')paFindSheet('ultimate')">
+      <button class="pa-search-all" onclick="paFindSheet('ultimate')">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        Search Lead Sheets
+      </button>
+      <div class="section-label" style="margin:12px 0 6px;">Or pick a specific site</div>
+      <div class="pa-preset-grid">
+        <button class="pa-preset" onclick="paFindSheet('ultimate')"><h4>🎸 Ultimate Guitar</h4><p>Chords &amp; tabs</p></button>
+        <button class="pa-preset" onclick="paFindSheet('musescore')"><h4>🎼 MuseScore</h4><p>Sheet music + MIDI</p></button>
+        <button class="pa-preset" onclick="paFindSheet('chordie')"><h4>🎵 Chordie</h4><p>Chord sheets</p></button>
+        <button class="pa-preset" onclick="paFindSheet('8notes')"><h4>🎹 8notes</h4><p>Free piano sheets</p></button>
+        <button class="pa-preset" onclick="paFindSheet('freemidi')"><h4>🎧 FreeMidi</h4><p>MIDI files</p></button>
+        <button class="pa-preset" onclick="paFindSheet('youtube')"><h4>▶️ YouTube</h4><p>Watch &amp; follow</p></button>
+      </div>
+    </div>
+
     <div class="pa-note">
-      Tracks open in YouTube. Keep this page open on a second device, or split-screen,
-      to see your scale &amp; chords while you play.
+      Sheets open in your browser. MuseScore &amp; FreeMidi often include downloadable MIDI —
+      pair your tablet to your mixer over Bluetooth to play those along.
+      Tip: split-screen the song with a lead sheet, and keep your scale &amp; chords above for reference.
     </div>
   `;
 }
@@ -2072,6 +2160,31 @@ function paPlayScale(){
   const midis=[m]; for(const step of sc.intervals){ m+=step; midis.push(m); }
   const seq = midis.length>8 ? [...midis.slice(0,7), midis[0]+12] : midis;
   seq.forEach((midi,i)=>setTimeout(()=>playNote(midiToFreq(midi),0.5,0.3), i*200));
+}
+
+let paSong='';
+
+function paFindSheet(site){
+  const raw=(paSong&&paSong.trim()) ? paSong.trim() : '';
+  if(!raw && site!=='youtube'){
+    // No song typed — nudge the user to type one
+    const inp=document.getElementById('pa-song');
+    if(inp){inp.focus();inp.style.borderColor='var(--gold)';inp.placeholder='Type a song name first…';}
+    return;
+  }
+  const q = raw || (paRoot+' '+(paType==='major'?'major':'minor')+' songs');
+  const enc=encodeURIComponent(q);
+  let url;
+  switch(site){
+    case 'ultimate':  url='https://www.ultimate-guitar.com/search.php?search_type=title&value='+enc; break;
+    case 'chordie':   url='https://www.chordie.com/results.php?q='+enc; break;
+    case 'musescore': url='https://musescore.com/sheetmusic?text='+enc; break;
+    case '8notes':    url='https://www.8notes.com/search/?s='+enc; break;
+    case 'freemidi':  url='https://freemidi.org/search?q='+enc; break;
+    case 'youtube':   url='https://www.youtube.com/results?search_query='+encodeURIComponent((raw||q)+' chords lyrics'); break;
+    default: url='https://www.ultimate-guitar.com/search.php?value='+enc;
+  }
+  window.open(url,'_blank','noopener');
 }
 
 function paOpenYouTube(kind){
@@ -2519,7 +2632,193 @@ function learnNext(){ if(learnStep<LEARN_STEPS.length-1){learnStep++;renderLearn
 function learnPrev(){ if(learnStep>0){learnStep--;renderLearn();} }
 
 // ═══════════════════════════════════════════════════════
-// THEME MANAGEMENT// ═══════════════════════════════════════════════════════
+// NOTE LISTENER — microphone pitch detection (autocorrelation)
+// ═══════════════════════════════════════════════════════
+let listenActive=false;
+let listenStream=null, listenAnalyser=null, listenCtx=null, listenRAF=null, listenBuf=null;
+let listenScaleRoot='C', listenScaleType='major';
+let listenLastMidi=-1;
+
+const NOTE_NAMES_SHARP=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+
+function initListen(){ renderListen(); }
+
+function renderListen(){
+  const c=document.getElementById('listen-container');
+  if(!c)return;
+  c.innerHTML=`
+    <div class="listen-tuner">
+      <div class="lt-note" id="lt-note">—</div>
+      <div class="lt-freq" id="lt-freq">Play a single note on your keyboard</div>
+      <div class="lt-meter">
+        <div class="lt-meter-track"></div>
+        <div class="lt-meter-center"></div>
+        <div class="lt-needle" id="lt-needle"></div>
+      </div>
+      <div class="lt-cents" id="lt-cents">&nbsp;</div>
+    </div>
+
+    <button class="listen-toggle ${listenActive?'stop':'start'}" id="listen-toggle" onclick="toggleListen()">
+      ${listenActive
+        ? '<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2\"/></svg> Stop Listening'
+        : '<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z\"/><path d=\"M19 11a7 7 0 0 1-14 0M12 18v3\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/></svg> Start Listening'}
+    </button>
+    <div class="listen-status">
+      <div class="listen-mic-dot ${listenActive?'live':''}" id="listen-dot"></div>
+      <span id="listen-status-text">${listenActive?'Listening…':'Microphone off'}</span>
+    </div>
+
+    <div class="listen-scale-row">
+      <select class="select-styled" id="listen-root" onchange="listenScaleRoot=this.value;updateListenKeyboard()">
+        ${['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'].map(n=>`<option ${n===listenScaleRoot?'selected':''}>${n}</option>`).join('')}
+      </select>
+      <select class="select-styled" id="listen-type" onchange="listenScaleType=this.value;updateListenKeyboard()">
+        <option value="major" ${listenScaleType==='major'?'selected':''}>Major</option>
+        <option value="naturalMinor" ${listenScaleType==='naturalMinor'?'selected':''}>Minor</option>
+        <option value="majorPentatonic">Major Pentatonic</option>
+        <option value="minorPentatonic">Minor Pentatonic</option>
+        <option value="blues">Blues</option>
+      </select>
+    </div>
+    <div class="listen-hint">Scale shown in blue — play along and your note lights green when detected.</div>
+
+    <div class="piano-wrap"><div class="piano-keyboard" id="listen-piano"></div></div>
+
+    <div class="listen-hint">
+      Works best with the keyboard as the loudest sound. If a backing track is playing
+      loudly in the same room, use headphones for it so the mic mainly hears your playing.
+      Single notes detect most reliably; full chords are harder for any mic to read.
+    </div>
+  `;
+  updateListenKeyboard();
+}
+
+function updateListenKeyboard(){
+  const notes=buildScale(listenScaleRoot, listenScaleType);
+  buildPianoUI('listen-piano', notes, listenScaleRoot, 2, 3);
+}
+
+function toggleListen(){
+  if(listenActive) stopListen();
+  else startListen();
+}
+
+async function startListen(){
+  try{
+    listenStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    listenCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const src=listenCtx.createMediaStreamSource(listenStream);
+    listenAnalyser=listenCtx.createAnalyser();
+    listenAnalyser.fftSize=2048;
+    listenBuf=new Float32Array(listenAnalyser.fftSize);
+    src.connect(listenAnalyser);
+    listenActive=true;
+    renderListen();
+    detectPitchLoop();
+  }catch(err){
+    alert('Microphone access is needed for the Note Listener. Please allow microphone permission and try again.');
+    listenActive=false;
+    renderListen();
+  }
+}
+
+function stopListen(){
+  listenActive=false;
+  if(listenRAF)cancelAnimationFrame(listenRAF);
+  if(listenStream){listenStream.getTracks().forEach(t=>t.stop());listenStream=null;}
+  if(listenCtx){listenCtx.close().catch(()=>{});listenCtx=null;}
+  listenLastMidi=-1;
+  // clear keyboard highlight
+  document.querySelectorAll('#listen-piano .piano-key.pressed').forEach(k=>k.classList.remove('pressed'));
+  const t=document.getElementById('listen-status-text'); if(t)t.textContent='Microphone off';
+  const d=document.getElementById('listen-dot'); if(d)d.classList.remove('live');
+  const tog=document.getElementById('listen-toggle');
+  if(tog){tog.className='listen-toggle start';}
+}
+
+// Autocorrelation pitch detection — robust for single notes
+function autoCorrelate(buf, sampleRate){
+  let SIZE=buf.length;
+  let rms=0;
+  for(let i=0;i<SIZE;i++){rms+=buf[i]*buf[i];}
+  rms=Math.sqrt(rms/SIZE);
+  if(rms<0.01) return -1; // too quiet
+
+  let r1=0, r2=SIZE-1, thres=0.2;
+  for(let i=0;i<SIZE/2;i++){ if(Math.abs(buf[i])<thres){r1=i;break;} }
+  for(let i=1;i<SIZE/2;i++){ if(Math.abs(buf[SIZE-i])<thres){r2=SIZE-i;break;} }
+  const b=buf.slice(r1,r2);
+  const newSize=b.length;
+  const cc=new Array(newSize).fill(0);
+  for(let i=0;i<newSize;i++)
+    for(let j=0;j<newSize-i;j++)
+      cc[i]+=b[j]*b[j+i];
+  let d=0; while(cc[d]>cc[d+1])d++;
+  let maxval=-1, maxpos=-1;
+  for(let i=d;i<newSize;i++){ if(cc[i]>maxval){maxval=cc[i];maxpos=i;} }
+  let T0=maxpos;
+  // parabolic interpolation for accuracy
+  const x1=cc[T0-1]||0, x2=cc[T0]||0, x3=cc[T0+1]||0;
+  const a=(x1+x3-2*x2)/2, bb=(x3-x1)/2;
+  if(a) T0=T0-bb/(2*a);
+  if(T0===0) return -1;
+  return sampleRate/T0;
+}
+
+function freqToMidiCents(freq){
+  const midiFloat=69+12*Math.log2(freq/440);
+  const midi=Math.round(midiFloat);
+  const cents=Math.round((midiFloat-midi)*100);
+  return {midi, cents};
+}
+
+function detectPitchLoop(){
+  if(!listenActive||!listenAnalyser){return;}
+  listenAnalyser.getFloatTimeDomainData(listenBuf);
+  const freq=autoCorrelate(listenBuf, listenCtx.sampleRate);
+
+  const noteEl=document.getElementById('lt-note');
+  const freqEl=document.getElementById('lt-freq');
+  const needle=document.getElementById('lt-needle');
+  const centsEl=document.getElementById('lt-cents');
+
+  if(freq>0 && freq<2000){
+    const {midi,cents}=freqToMidiCents(freq);
+    const name=NOTE_NAMES_SHARP[midi%12];
+    const octave=Math.floor(midi/12)-1;
+    if(noteEl){noteEl.textContent=name+octave;noteEl.classList.add('active');}
+    if(freqEl)freqEl.textContent=freq.toFixed(1)+' Hz';
+    // needle: -50..+50 cents → 0..100%
+    if(needle){
+      const pct=Math.max(0,Math.min(100,50+cents));
+      needle.style.left=pct+'%';
+      needle.style.background = Math.abs(cents)<=5?'var(--green)':'var(--gold)';
+    }
+    if(centsEl){
+      if(Math.abs(cents)<=5){centsEl.className='lt-cents intune';centsEl.textContent='In tune ✓';}
+      else if(cents<0){centsEl.className='lt-cents flat';centsEl.textContent=cents+' cents (flat)';}
+      else{centsEl.className='lt-cents sharp';centsEl.textContent='+'+cents+' cents (sharp)';}
+    }
+    // light the keyboard
+    if(midi!==listenLastMidi){
+      document.querySelectorAll('#listen-piano .piano-key.pressed').forEach(k=>k.classList.remove('pressed'));
+      const pc=midi%12;
+      document.querySelectorAll('#listen-piano .piano-key[data-midi]').forEach(k=>{
+        if(parseInt(k.dataset.midi)%12===pc)k.classList.add('pressed');
+      });
+      listenLastMidi=midi;
+    }
+  } else {
+    if(noteEl)noteEl.classList.remove('active');
+    if(listenLastMidi!==-1){
+      document.querySelectorAll('#listen-piano .piano-key.pressed').forEach(k=>k.classList.remove('pressed'));
+      listenLastMidi=-1;
+    }
+  }
+  listenRAF=requestAnimationFrame(detectPitchLoop);
+}
+
+// ═══════════════════════════════════════════════════════
 // THEME MANAGEMENT
 // ═══════════════════════════════════════════════════════
 function setTheme(mode, btn){
