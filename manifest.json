@@ -1,0 +1,17 @@
+{
+  "name": "KeyMaster Pro",
+  "short_name": "KeyMaster Pro",
+  "description": "Circle of Fifths & Music Theory Trainer by MusicAppsUK — Scales, Chords, Ear Training",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0D1B2A",
+  "theme_color": "#0D1B2A",
+  "icons": [
+    {"src": "icons/icon-192.png","sizes": "192x192","type": "image/png","purpose": "any maskable"},
+    {"src": "icons/icon-512.png","sizes": "512x512","type": "image/png","purpose": "any maskable"}
+  ],
+  "categories": ["education","music"],
+  "lang": "en-GB",
+  "screenshots": []
+}
