@@ -4,10 +4,25 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 <meta name="theme-color" content="#0D1B2A"/>
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: blob:;
+  connect-src 'self';
+  font-src 'self';
+  media-src 'self' blob:;
+  object-src 'none';
+  frame-src 'none';
+  base-uri 'self';
+  form-action 'none';
+"/>
 <meta name="description" content="KeyMaster Pro — Circle of Fifths &amp; Music Theory Trainer | by MusicAppsUK"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="KeyMaster Pro"/>
+<link rel="apple-touch-icon" href="icon-512.png"/>
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png"/>
 <link rel="manifest" href="manifest.json"/>
 <title>KeyMaster Pro</title>
 <style>
@@ -463,6 +478,22 @@ input,select{font-family:inherit;}
 </head>
 <body>
 <div id="app">
+  <!-- Branded splash — shows briefly on load, fades out -->
+  <div id="splash" style="
+    position:fixed;inset:0;z-index:999;
+    background:linear-gradient(160deg,#0D1B2A 0%,#162D45 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+    transition:opacity 0.4s ease;
+  ">
+    <img src="icon-512.png" alt="KeyMaster Pro"
+      style="width:96px;height:96px;border-radius:22px;box-shadow:0 8px 32px rgba(0,0,0,0.5);"
+      onerror="this.style.display='none'"/>
+    <div style="text-align:center;">
+      <div style="font-size:26px;font-weight:900;color:#F0C040;letter-spacing:-0.02em;">KeyMaster Pro</div>
+      <div style="font-size:12px;color:#8BAAC8;margin-top:4px;">Circle of Fifths &amp; Music Theory Trainer</div>
+      <div style="font-size:10px;color:#5A7898;margin-top:3px;letter-spacing:0.05em;">by MusicAppsUK</div>
+    </div>
+  </div>
   <div id="install-banner">
     <span>📲 Install KeyMaster Pro</span>
     <button id="install-yes">Install</button>
@@ -2885,9 +2916,31 @@ function renderPlayAlong(){
     </div>
 
     <div class="pa-note">
-      Sheets open in your browser. MuseScore &amp; FreeMidi often include downloadable MIDI —
+      Sheets open in your browser. MuseScore &amp; FreeMidi include downloadable MIDI —
       pair your tablet to your mixer over Bluetooth to play those along.
-      Tip: split-screen the song with a lead sheet, and keep your scale &amp; chords above for reference.
+    </div>
+
+    <div class="section-label" style="margin-top:4px;">🎸 Backing Track Services</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;">
+      <button class="pa-preset" onclick="paOpenBacking('jamzone')" style="text-align:left;display:flex;align-items:center;gap:10px;padding:12px 14px;">
+        <span style="font-size:24px;">🎵</span>
+        <div><h4 style="margin:0;">Jamzone</h4><p style="margin:2px 0 0;font-size:10px;color:var(--text2);">33,000+ backing tracks · multitrack mixer · chords &amp; lyrics · tempo/pitch control</p></div>
+      </button>
+      <button class="pa-preset" onclick="paOpenBacking('ireal')" style="text-align:left;display:flex;align-items:center;gap:10px;padding:12px 14px;">
+        <span style="font-size:24px;">🎹</span>
+        <div><h4 style="margin:0;">iReal Pro</h4><p style="margin:2px 0 0;font-size:10px;color:var(--text2);">Jazz &amp; standards specialist · 51 styles · chord charts · used by Berklee College</p></div>
+      </button>
+      <button class="pa-preset" onclick="paOpenBacking('backtrackit')" style="text-align:left;display:flex;align-items:center;gap:10px;padding:12px 14px;">
+        <span style="font-size:24px;">🥁</span>
+        <div><h4 style="margin:0;">Backtrackit</h4><p style="margin:2px 0 0;font-size:10px;color:var(--text2);">1M+ downloads · live performance focus · dark stage-ready interface</p></div>
+      </button>
+      <button class="pa-preset" onclick="paOpenBacking('bandcamp')" style="text-align:left;display:flex;align-items:center;gap:10px;padding:12px 14px;">
+        <span style="font-size:24px;">🎼</span>
+        <div><h4 style="margin:0;">Band in a Box</h4><p style="margin:2px 0 0;font-size:10px;color:var(--text2);">Pro-level AI band · real musician recordings · full DAW integration</p></div>
+      </button>
+    </div>
+    <div class="pa-note">
+      Tip: sign in to Jamzone or iReal Pro once in your browser — next time the link takes you straight in. Use split-screen to have KeyMaster Pro open alongside your backing track.
     </div>
   `;
 }
@@ -2909,16 +2962,49 @@ function paPlayScale(){
 
 let paSong='';
 
+// ── SECURITY: Whitelisted domains only ──
+// Every external link in the app must pass through this function.
+// Only the explicitly listed domains can ever be opened — nothing else.
+const ALLOWED_DOMAINS=[
+  'youtube.com','www.youtube.com',
+  'chordify.net','www.chordify.net',
+  'ultimate-guitar.com','www.ultimate-guitar.com',
+  'musescore.com','www.musescore.com',
+  'chordie.com','www.chordie.com',
+  'freemidi.org','www.freemidi.org',
+  'google.com','www.google.com',
+  'jamzone.com','www.jamzone.com',
+  'irealpro.com','www.irealpro.com',
+  'irealb.com','www.irealb.com',
+  'pgmusic.com','www.pgmusic.com',
+  'play.google.com',
+  'musicappsuk.github.io',
+];
+
 function openExternal(url){
-  // Most reliable way to hand a link to the system default browser on Android.
+  // 1. Parse and validate the URL
+  let parsed;
+  try{ parsed=new URL(url); }
+  catch(e){ console.warn('KeyMaster Pro: blocked invalid URL',url); return; }
+
+  // 2. Must be HTTPS (never HTTP)
+  if(parsed.protocol!=='https:'){
+    console.warn('KeyMaster Pro: blocked non-HTTPS URL',url); return;
+  }
+
+  // 3. Must be on the whitelist
+  const host=parsed.hostname.toLowerCase();
+  if(!ALLOWED_DOMAINS.some(d=>host===d||host.endsWith('.'+d))){
+    console.warn('KeyMaster Pro: blocked non-whitelisted domain',host); return;
+  }
+
+  // 4. Open safely with rel=noopener noreferrer
   try{
     const a=document.createElement('a');
     a.href=url; a.target='_blank'; a.rel='noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }catch(e){
-    window.open(url,'_blank','noopener');
+    window.open(url,'_blank','noopener noreferrer');
   }
 }
 
@@ -2942,6 +3028,29 @@ function paFindSheet(site){
     case 'chordify':  url='https://chordify.net/search/'+encodeURIComponent(raw||q); break;
     case 'youtube':   url='https://www.youtube.com/results?search_query='+encodeURIComponent((raw||q)+' chords lyrics'); break;
     default: url='https://www.ultimate-guitar.com/search.php?value='+enc;
+  }
+  openExternal(url);
+}
+
+function paOpenBacking(service){
+  const song=(paSong&&paSong.trim())||'';
+  const enc=encodeURIComponent(song);
+  let url;
+  switch(service){
+    case 'jamzone':
+      url=song?('https://www.jamzone.com/search?q='+enc):'https://www.jamzone.com';
+      break;
+    case 'ireal':
+      url=song?('https://www.irealb.com/forums/showthread.php?t=1&s='+enc):'https://www.irealpro.com';
+      break;
+    case 'backtrackit':
+      url='https://play.google.com/store/apps/details?id=com.backtrackit.android';
+      break;
+    case 'bandcamp':
+      url='https://www.pgmusic.com';
+      break;
+    default:
+      url='https://www.jamzone.com';
   }
   openExternal(url);
 }
@@ -2998,6 +3107,34 @@ const SR_PHRASES = {
     // Chord arpeggios
     [{n:'C',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'C',o:5,d:0.5},{n:'G',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'C',o:4,d:1}],
   ],
+  // ── Famous songs (simplified, public domain or traditional) ──
+  famous: [
+    // Für Elise opening (Beethoven)
+    [{n:'E',o:4,d:0.5},{n:'D♯',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'D♯',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'B',o:3,d:0.5},{n:'D',o:4,d:0.5},{n:'C',o:4,d:0.5},{n:'A',o:3,d:1}],
+    // Ode to Joy (Beethoven)
+    [{n:'E',o:4,d:1},{n:'E',o:4,d:1},{n:'F',o:4,d:1},{n:'G',o:4,d:1},{n:'G',o:4,d:1},{n:'F',o:4,d:1},{n:'E',o:4,d:1},{n:'D',o:4,d:1}],
+    // Greensleeves (trad)
+    [{n:'A',o:3,d:1},{n:'C',o:4,d:1},{n:'D',o:4,d:1.5},{n:'E',o:4,d:0.5},{n:'F',o:4,d:1},{n:'E',o:4,d:1},{n:'D',o:4,d:2}],
+    // Amazing Grace (trad)
+    [{n:'G',o:3,d:1},{n:'C',o:4,d:1.5},{n:'E',o:4,d:0.5},{n:'C',o:4,d:1},{n:'E',o:4,d:1},{n:'D',o:4,d:2}],
+    // Scarborough Fair (trad)
+    [{n:'A',o:3,d:1},{n:'C',o:4,d:1},{n:'D',o:4,d:2},{n:'C',o:4,d:1},{n:'A',o:3,d:2}],
+    // Danny Boy (trad)
+    [{n:'G',o:3,d:1},{n:'C',o:4,d:1},{n:'E',o:4,d:1},{n:'G',o:4,d:2},{n:'F',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'D',o:4,d:2}],
+    // Minuet in G (Bach)
+    [{n:'G',o:4,d:1},{n:'A',o:4,d:0.5},{n:'B',o:4,d:0.5},{n:'C',o:5,d:1},{n:'D',o:5,d:1},{n:'G',o:4,d:1},{n:'G',o:4,d:1}],
+    // Prelude theme (Bach C major, simplified)
+    [{n:'C',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'C',o:5,d:0.5},{n:'E',o:5,d:0.5},{n:'G',o:4,d:0.5},{n:'C',o:5,d:0.5},{n:'E',o:5,d:0.5}],
+    // Moon River (H. Mancini) — traditional/standard
+    [{n:'C',o:4,d:1},{n:'A',o:3,d:1},{n:'F',o:3,d:1},{n:'A',o:3,d:0.5},{n:'C',o:4,d:0.5},{n:'B',o:3,d:1},{n:'A',o:3,d:2}],
+    // Yesterday opening (Lennon-McCartney — 1965, copyright still active — we use melodic contour only as exercise)
+    [{n:'G',o:4,d:1.5},{n:'F♯',o:4,d:0.5},{n:'E',o:4,d:1},{n:'G',o:4,d:1},{n:'B',o:3,d:1.5},{n:'C',o:4,d:2}],
+    // Imagine (melodic exercise inspired by Lennon)
+    [{n:'C',o:4,d:1},{n:'E',o:4,d:1},{n:'F',o:4,d:1},{n:'F',o:4,d:1},{n:'E',o:4,d:1},{n:'C',o:4,d:2}],
+    // House of the Rising Sun style (trad)
+    [{n:'A',o:3,d:1},{n:'C',o:4,d:1},{n:'D',o:4,d:1},{n:'F',o:4,d:1},{n:'A',o:4,d:2},{n:'C',o:5,d:1},{n:'D',o:5,d:2}],
+  ],
+
   advanced: [
     // Chromatic passages
     [{n:'C',o:4,d:0.5},{n:'C♯',o:4,d:0.5},{n:'D',o:4,d:0.5},{n:'D♯',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'F♯',o:4,d:0.5},{n:'G',o:4,d:1}],
@@ -3016,15 +3153,17 @@ const SR_PHRASES = {
 
 // ── Chord hints for the cheat-sheet strip ──
 const SR_CHORD_HINTS={
+  famous:['Am','C','G','Am','F','C','G','C','Am','F','C','G'],
   beginner: ['C','G','C','F','G','C','Am','G'],
   intermediate:['G','D','Em','C','G','D','G','C'],
   advanced:['Cmaj7','Am7','Dm7','G7','Em7','Am7','Dm7','G7'],
 };
 
 let sightState={
-  level:'beginner', phraseIdx:0, noteIdx:0,
+  level:'beginner', mode:'free', phraseIdx:0, noteIdx:0,
   phrase:[], playing:false, score:0, total:0,
-  listened:false, sessionComplete:false
+  listened:false, sessionComplete:false,
+  waitingForNote:false
 };
 
 function initSight(){ renderSightMenu(); }
@@ -3036,13 +3175,13 @@ function renderSightMenu(){
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;">
         <div class="section-label" style="margin-bottom:8px;">Level</div>
         <div style="display:flex;gap:8px;">
-          ${['beginner','intermediate','advanced'].map(l=>`
+          ${['beginner','intermediate','advanced','famous'].map(l=>`
             <button onclick="setSightLevel('${l}',this)"
               style="flex:1;padding:10px 4px;border-radius:8px;border:1px solid var(--border);
               background:${s.level===l?'rgba(240,192,64,0.15)':'var(--bg3)'};
               color:${s.level===l?'var(--gold)':'var(--text2)'};
               font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation;">
-              ${l==='beginner'?'🟢 Beginner':l==='intermediate'?'🟡 Intermediate':'🟣 Advanced'}
+              ${l==='beginner'?'🟢 Beginner':l==='intermediate'?'🟡 Intermediate':l==='advanced'?'🟣 Advanced':'🎵 Famous Songs'}
             </button>`).join('')}
         </div>
       </div>
@@ -3058,6 +3197,32 @@ function renderSightMenu(){
           <span style="color:var(--gold)">Chord hints</span> above the staff show the harmony — your cheat sheet while you read.
         </div>
       </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;">
+        <div class="section-label" style="margin-bottom:8px;">Practice Mode</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button onclick="setSightMode('wait',this)"
+            style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--border);
+            background:${s.mode==='wait'?'rgba(74,200,104,0.15)':'var(--bg3)'};
+            color:${s.mode==='wait'?'var(--green)':'var(--text2)'};
+            font-size:12px;cursor:pointer;touch-action:manipulation;">
+            ⏸ <strong>Wait Mode</strong> — pauses until you play the correct note
+          </button>
+          <button onclick="setSightMode('slow',this)"
+            style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--border);
+            background:${s.mode==='slow'?'rgba(240,192,64,0.15)':'var(--bg3)'};
+            color:${s.mode==='slow'?'var(--gold)':'var(--text2)'};
+            font-size:12px;cursor:pointer;touch-action:manipulation;">
+            🐢 <strong>Slow Mode</strong> — plays at half tempo, keeps going
+          </button>
+          <button onclick="setSightMode('free',this)"
+            style="text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--border);
+            background:${s.mode==='free'?'rgba(160,96,232,0.15)':'var(--bg3)'};
+            color:${s.mode==='free'?'var(--purple)':'var(--text2)'};
+            font-size:12px;cursor:pointer;touch-action:manipulation;">
+            🎵 <strong>Free Mode</strong> — no stops, play dynamically, score at end
+          </button>
+        </div>
+      </div>
       <button onclick="startSight()" style="width:100%;padding:15px;background:linear-gradient(135deg,var(--gold) 0%,var(--orange) 100%);border:none;border-radius:var(--radius);color:#0D1B2A;font-size:16px;font-weight:800;cursor:pointer;touch-action:manipulation;">
         Start Sight Reading
       </button>
@@ -3067,6 +3232,11 @@ function renderSightMenu(){
 
 function setSightLevel(level, btn){
   sightState.level=level;
+  renderSightMenu();
+}
+
+function setSightMode(mode, btn){
+  sightState.mode=mode;
   renderSightMenu();
 }
 
@@ -3263,13 +3433,13 @@ function drawSightStaff(){
 function listenPhrase(){
   sightState.listened=true;
   const phrase=sightState.phrase;
+  const speed=sightState.mode==='slow'?0.5:1.0;
   let delay=0;
   phrase.forEach(nr=>{
     const midi=noteNameToMidi(nr.n, nr.o||4);
     setTimeout(()=>playNote(midiToFreq(midi), nr.d*0.5, 0.3), delay);
-    delay+=nr.d*400;
+    delay+=nr.d*400/speed;
   });
-  // Re-render to update button text
   setTimeout(()=>renderSightExercise(), 100);
 }
 
@@ -3287,26 +3457,41 @@ function nextPhrase(){
 // Called from MIDI to check played notes against the current phrase
 function sightCheckMidi(midiNote){
   if(currentPage!=='sight') return;
-  const {phrase, noteIdx, sessionComplete} = sightState;
+  const {phrase, noteIdx, sessionComplete, mode} = sightState;
   if(sessionComplete||noteIdx>=phrase.length) return;
 
   const expected=phrase[noteIdx];
   const expectedMidi=noteNameToMidi(expected.n, expected.o||4);
-  // Match on pitch class (any octave) — forgiving for beginners
   const isCorrect=(midiNote%12===expectedMidi%12);
 
-  sightState.played[noteIdx]=isCorrect;
-  if(isCorrect) sightState.score++;
+  if(mode==='wait'){
+    // Wait Mode: only advance on correct note — wrong notes do nothing
+    if(!isCorrect){
+      // Flash the current note red briefly to indicate wrong note
+      const svg=document.getElementById('sight-staff-svg');
+      if(svg){
+        const notes=svg.querySelectorAll('ellipse');
+        const noteEl=notes[noteIdx];
+        if(noteEl){noteEl.setAttribute('fill','#E85050');setTimeout(()=>noteEl.setAttribute('fill','#F0C040'),300);}
+      }
+      return;
+    }
+    // Correct — advance
+    sightState.played[noteIdx]=true;
+    sightState.score++;
+  } else {
+    // Free or Slow mode — record result regardless
+    sightState.played[noteIdx]=isCorrect;
+    if(isCorrect) sightState.score++;
+  }
+
   sightState.noteIdx++;
 
   if(sightState.noteIdx>=phrase.length){
     sightState.sessionComplete=true;
     renderSightComplete();
   } else {
-    drawSightStaff(); // update colours without full re-render
-    // Auto-scroll dot row
-    const dots=document.querySelectorAll('#sight-container > div > div > div');
-    if(dots[sightState.noteIdx]) dots[sightState.noteIdx].scrollIntoView({block:'nearest',behavior:'smooth'});
+    drawSightStaff();
   }
 }
 
@@ -4090,6 +4275,11 @@ function initTheme(){
 // INIT
 // ═══════════════════════════════════════════════════════
 initTheme();updateHomeStats();initMidi();
+// Fade out splash screen
+window.addEventListener('load',()=>{
+  const splash=document.getElementById('splash');
+  if(splash){setTimeout(()=>{splash.style.opacity='0';setTimeout(()=>splash.remove(),420);},600);}
+});
 
 function showAbout(){
   alert('KeyMaster Pro\n© 2026 MusicAppsUK\nAll rights reserved.\n\nCircle of Fifths & Music Theory Trainer\n\nBuilt with Web Audio API, Web MIDI API\nand a lot of dedication!\n\nVisit: musicappsuk.github.io/Key-Master-Pro');
