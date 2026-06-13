@@ -162,11 +162,11 @@ input,select{font-family:inherit;}
 .home-hero p{font-size:10px;color:var(--text2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hero-actions{display:flex;gap:5px;flex-shrink:0;}
 .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;}
-.home-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.home-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 .home-card:active{transform:scale(0.97);}
-.home-card .hc-icon{font-size:26px;margin-bottom:8px;display:block;}
-.home-card h3{font-size:13px;font-weight:700;color:var(--text);}
-.home-card p{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.4;}
+.home-card .hc-icon{font-size:34px;margin-bottom:10px;display:block;}
+.home-card h3{font-size:15px;font-weight:700;color:var(--text);}
+.home-card p{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.4;}
 .home-card.wide{grid-column:span 2;display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(240,192,64,0.1) 0%,rgba(74,158,232,0.06) 100%);border-color:var(--gold2);}
 .home-card.wide .hc-icon{margin-bottom:0;font-size:32px;flex-shrink:0;}
 .home-stats{padding:0 16px 14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
@@ -1184,20 +1184,51 @@ function highlightStaffNote(midiNote, on){
     else { fill='#E85050'; stroke='#C82020'; }         // red = wrong note
   }
 
-  const LS=9, trebleTop=18;
-  const trebleBottomY=trebleTop+LS*4;
-  const y=trebleBottomY-(step-2)*(LS/2);
-  const W=parseInt(svg.getAttribute('width'))||svg.viewBox?.baseVal?.width||360;
+  // ── Choose treble or bass staff based on pitch ──
+  // C4 (middle C, step 0) and above → treble. Below middle C → bass clef.
+  const LS=9, trebleTop=18, gap=52;
+  const trebleBottomY=trebleTop+LS*4;   // E4 bottom treble line = 54
+  const bassTop=trebleTop+LS*4+gap;      // A3 top bass line = 106
+  const useBass = step < 0;              // below middle C → bass staff
+  const y = useBass
+    ? bassTop-(step+2)*(LS/2)
+    : trebleBottomY-(step-2)*(LS/2);
+  const W=parseInt(svg.getAttribute('width'))||360;
   const x=W*0.5;
 
-  // Ledger line for middle C / out-of-staff notes
-  if(step===0||step===-1){
+  // ── Ledger lines ──
+  // Middle C (step 0): ledger just below treble OR just above bass — draw on treble side
+  if(step===0){
     const ll=document.createElementNS('http://www.w3.org/2000/svg','line');
     ll.setAttribute('class',id);
     ll.setAttribute('x1',x-10);ll.setAttribute('x2',x+10);
     ll.setAttribute('y1',trebleBottomY+LS);ll.setAttribute('y2',trebleBottomY+LS);
-    ll.setAttribute('stroke',stroke);ll.setAttribute('stroke-width','1');
+    ll.setAttribute('stroke',stroke);ll.setAttribute('stroke-width','1.2');
     svg.appendChild(ll);
+  }
+  // Ledger lines above treble (high notes, step>6)
+  if(step>6){
+    for(let s=8;s<=step;s+=2){
+      const ly=trebleBottomY-(s-2)*(LS/2);
+      const ll=document.createElementNS('http://www.w3.org/2000/svg','line');
+      ll.setAttribute('class',id);
+      ll.setAttribute('x1',x-10);ll.setAttribute('x2',x+10);
+      ll.setAttribute('y1',ly);ll.setAttribute('y2',ly);
+      ll.setAttribute('stroke',stroke);ll.setAttribute('stroke-width','1.2');
+      svg.appendChild(ll);
+    }
+  }
+  // Ledger lines below bass (low notes, step < -10)
+  if(step<-10){
+    for(let s=-12;s>=step;s-=2){
+      const ly=bassTop-(s+2)*(LS/2);
+      const ll=document.createElementNS('http://www.w3.org/2000/svg','line');
+      ll.setAttribute('class',id);
+      ll.setAttribute('x1',x-10);ll.setAttribute('x2',x+10);
+      ll.setAttribute('y1',ly);ll.setAttribute('y2',ly);
+      ll.setAttribute('stroke',stroke);ll.setAttribute('stroke-width','1.2');
+      svg.appendChild(ll);
+    }
   }
 
   const dot=document.createElementNS('http://www.w3.org/2000/svg','ellipse');
@@ -1480,8 +1511,11 @@ function drawGrandStaff(svgId, notes, chordMode=false){
   // trebleBottom = E4 = step -2 → trebleBottomY = trebleTop+4*LS
   // So step s → y = trebleBottomY - (s+2)*(LS/2)
   function stepToY(step){
-    // step 0 = C4 (one ledger below treble). E4 (step 2) sits on the bottom treble line.
-    return trebleBottomY - (step-2)*(LS/2);
+    // C4 (step 0) and above → treble. Below middle C → bass clef.
+    if(step < 0){
+      return bassTop - (step+2)*(LS/2);   // bass: A3(step-2)=bassTop line
+    }
+    return trebleBottomY - (step-2)*(LS/2); // treble: E4(step2)=bottom line
   }
 
   // ── Render each note ──
@@ -2357,13 +2391,6 @@ function renderEarStart(){
   const c=document.getElementById('ear-container');
   const s=load();
   c.innerHTML=`
-    <div class="score-row">
-      <div class="score-box"><div class="sb-val" style="color:var(--purple)">${s.earBest||0}%</div><div class="sb-lbl">Best Score</div></div>
-      <div class="score-box"><div class="sb-val">${s.earSessions||0}</div><div class="sb-lbl">Sessions</div></div>
-      <div class="score-box" style="display:flex;flex-direction:column;justify-content:center;padding:0;">
-        <button onclick="resetEarStats()" style="width:100%;height:100%;background:transparent;border:none;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;padding:12px 4px;text-transform:uppercase;letter-spacing:0.05em;">↺ Reset</button>
-      </div>
-    </div>
     <div>
       <div class="section-label" style="margin-bottom:8px;">Skill Level</div>
       <div class="level-row">
@@ -2387,6 +2414,13 @@ function renderEarStart(){
       </div>
     </div>
     <button class="next-btn" onclick="startEarTraining()">Start Ear Training</button>
+    <div class="score-row" style="margin-top:4px;">
+      <div class="score-box"><div class="sb-val" style="color:var(--purple)">${s.earBest||0}%</div><div class="sb-lbl">Best Score</div></div>
+      <div class="score-box"><div class="sb-val">${s.earSessions||0}</div><div class="sb-lbl">Sessions</div></div>
+      <div class="score-box" style="display:flex;flex-direction:column;justify-content:center;padding:0;">
+        <button onclick="resetEarStats()" style="width:100%;height:100%;background:transparent;border:none;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;padding:12px 4px;text-transform:uppercase;letter-spacing:0.05em;">↺ Reset</button>
+      </div>
+    </div>
   `;
 }
 

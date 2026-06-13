@@ -1,4 +1,4 @@
-const CACHE_NAME = 'keymaster-pro-rc3-v33';
+const CACHE_NAME = 'keymaster-pro-rc3-v34';
 const ASSETS = ['./', './index.html', './manifest.json'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
