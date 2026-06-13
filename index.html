@@ -129,10 +129,23 @@ input,select{font-family:inherit;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 
 /* ═══════════════════════ HOME ═══════════════════════ */
-.home-hero{padding:24px 16px 18px;background:linear-gradient(160deg,var(--bg2) 0%,var(--bg) 100%);border-bottom:1px solid var(--border);text-align:center;}
-.app-logo{width:52px;height:52px;margin:0 auto 10px;border-radius:14px;background:linear-gradient(135deg,var(--gold) 0%,var(--orange) 100%);display:flex;align-items:center;justify-content:center;font-size:26px;}
-.home-hero h1{font-size:24px;font-weight:900;letter-spacing:-0.03em;}
-.home-hero p{font-size:13px;color:var(--text2);margin-top:4px;}
+.home-hero{
+  padding:10px 14px;
+  background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.app-logo{
+  width:36px;height:36px;flex-shrink:0;
+  border-radius:9px;
+  background:linear-gradient(135deg,var(--gold) 0%,var(--orange) 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;overflow:hidden;
+}
+.hero-text{flex:1;min-width:0;}
+.home-hero h1{font-size:17px;font-weight:900;letter-spacing:-0.02em;color:var(--text);line-height:1.1;}
+.home-hero p{font-size:10px;color:var(--text2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hero-actions{display:flex;gap:5px;flex-shrink:0;}
 .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;}
 .home-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 .home-card:active{transform:scale(0.97);}
@@ -464,14 +477,15 @@ input,select{font-family:inherit;}
     <!-- ═══ HOME ═══ -->
     <div id="page-home" class="page active">
       <div class="home-hero">
-        <img src="logo.svg" alt="KeyMaster Pro" class="app-logo" style="width:72px;height:72px;border-radius:18px;" onerror="this.outerHTML='<div class=&quot;app-logo&quot;>🎹</div>'"/>
-        <h1>KeyMaster Pro</h1>
-        <p>Circle of Fifths &amp; Music Theory Trainer</p>
-        <p style="font-size:11px;color:var(--text3);margin-top:4px;letter-spacing:0.05em;">by MusicAppsUK</p>
-        <div class="theme-toggle-row">
-          <button class="theme-btn" onclick="setTheme('auto',this)" id="tbtn-auto">Auto</button>
-          <button class="theme-btn" onclick="setTheme('light',this)" id="tbtn-light">☀️ Light</button>
-          <button class="theme-btn" onclick="setTheme('dark',this)" id="tbtn-dark">🌙 Dark</button>
+        <img src="logo.svg" alt="KeyMaster Pro" class="app-logo" style="width:36px;height:36px;" onerror="this.style.display='none'"/>
+        <div class="hero-text">
+          <h1>KeyMaster Pro</h1>
+          <p>Circle of Fifths &amp; Music Theory Trainer · by MusicAppsUK</p>
+        </div>
+        <div class="hero-actions">
+          <button class="theme-btn" onclick="setTheme('auto',this)"  id="tbtn-auto"  title="Auto theme">A</button>
+          <button class="theme-btn" onclick="setTheme('light',this)" id="tbtn-light" title="Light mode">☀️</button>
+          <button class="theme-btn" onclick="setTheme('dark',this)"  id="tbtn-dark"  title="Dark mode">🌙</button>
         </div>
       </div>
       <div class="home-grid">
@@ -485,6 +499,8 @@ input,select{font-family:inherit;}
         <div class="home-card" onclick="nav('playalong')"><span class="hc-icon">▶️</span><h3>Play Along</h3><p>Backing tracks by key</p></div>
         <div class="home-card" onclick="nav('leadsheet')"><span class="hc-icon">📄</span><h3>Lead Sheet</h3><p>Build &amp; print charts</p></div>
         <div class="home-card" onclick="nav('listen')"><span class="hc-icon">🎤</span><h3>Note Listener</h3><p>Detect notes by mic</p></div>
+        <div class="home-card" onclick="nav('play')"><span class="hc-icon">🎵</span><h3>Play</h3><p>Circle · staff · keyboard live</p></div>
+        <div class="home-card" onclick="nav('sight')"><span class="hc-icon">📖</span><h3>Sight Reading</h3><p>Read · listen · play</p></div>
       </div>
       <div class="home-stats">
         <div class="stat-card"><div class="stat-val" id="stat-q">0</div><div class="stat-lbl">Questions</div></div>
@@ -635,6 +651,57 @@ input,select{font-family:inherit;}
       <div class="leadsheet-container" id="leadsheet-container"></div>
     </div>
 
+    <!-- ═══ SIGHT READING ═══ -->
+    <div id="page-sight" class="page">
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;">
+        <div><h1 style="font-size:18px;">Sight Reading</h1><p id="sight-subtitle">Read · listen · play along</p></div>
+        <div style="display:flex;gap:5px;align-items:center;">
+          <span id="sight-score-badge" style="background:rgba(240,192,64,0.15);border:1px solid var(--gold2);color:var(--gold);border-radius:12px;padding:4px 10px;font-size:12px;font-weight:700;display:none;"></span>
+        </div>
+      </div>
+      <div id="sight-container" style="display:flex;flex-direction:column;flex:1;overflow-y:auto;"></div>
+    </div>
+
+    <!-- ═══ PLAY PAGE — circle + grand staff + keyboard, MIDI drives all three ═══ -->
+    <div id="page-play" class="page">
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;">
+        <div><h1 style="font-size:18px;">Play</h1><p id="play-page-sub">Connect MIDI · play a note · see it everywhere</p></div>
+        <div style="display:flex;gap:6px;">
+          <select class="select-styled" id="play-root" onchange="updatePlayPage()" style="width:58px;padding:6px 8px;font-size:12px;">
+            <option>C</option><option>C♯</option><option>D♭</option><option>D</option>
+            <option>D♯</option><option>E♭</option><option>E</option><option>F</option>
+            <option>F♯</option><option>G♭</option><option>G</option><option>G♯</option>
+            <option>A♭</option><option>A</option><option>A♯</option><option>B♭</option><option>B</option>
+          </select>
+          <select class="select-styled" id="play-scale" onchange="updatePlayPage()" style="width:90px;padding:6px 8px;font-size:11px;">
+            <option value="major">Major</option>
+            <option value="naturalMinor">Minor</option>
+            <option value="dorian">Dorian</option>
+            <option value="majorPentatonic">Pentatonic</option>
+            <option value="blues">Blues</option>
+          </select>
+        </div>
+      </div>
+      <!-- Three panels stacked, each takes natural space -->
+      <div style="display:flex;flex-direction:column;flex:1;gap:0;overflow-y:auto;" id="play-panels">
+        <!-- Circle panel -->
+        <div style="display:flex;flex-direction:column;align-items:center;padding:6px 14px 4px;background:var(--bg);border-bottom:1px solid var(--border);">
+          <svg id="play-cof-svg" viewBox="0 0 400 400" style="width:100%;max-width:300px;height:auto;user-select:none;touch-action:none;"></svg>
+          <div id="play-note-display" style="text-align:center;padding:3px 0 4px;min-height:38px;">
+            <div style="font-size:11px;color:var(--text3);">Play a note — circle, staff &amp; keyboard respond</div>
+          </div>
+        </div>
+        <!-- Staff panel -->
+        <div style="padding:6px 14px 4px;border-bottom:1px solid var(--border);">
+          <svg id="play-staff-svg" width="340" height="140" style="display:block;width:100%;border-radius:8px;background:var(--bg2);border:1px solid var(--border);"></svg>
+        </div>
+        <!-- Keyboard panel -->
+        <div class="piano-wrap" style="padding:6px 14px 8px;">
+          <div class="piano-keyboard" id="play-piano"></div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /page-content -->
 
   <!-- ═══ MIDI CONNECT BUTTON ═══ -->
@@ -666,6 +733,9 @@ input,select{font-family:inherit;}
     </button>
     <button class="nav-item" onclick="nav('practice')" id="nav-practice">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>Practice
+    </button>
+    <button class="nav-item" onclick="nav('play')" id="nav-play">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/></svg>Play
     </button>
   </nav>
 </div>
@@ -1010,6 +1080,7 @@ function handleMidi(msg){
     highlightMidiOnPiano(note,false);
     highlightStaffNote(note,false);
     miniCofLastMidi=-1;
+    updatePlayPageFromMidi(note,false);
   }
 }
 
@@ -1099,7 +1170,7 @@ function hideMidiBar(){document.getElementById('midi-bar').classList.remove('sho
 // ═══════════════════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════════════════
-const PAGES=['home','circle','keysig','scales','chords','ear','practice','playalong','leadsheet','learn','listen'];
+const PAGES=['home','circle','keysig','scales','chords','ear','practice','playalong','leadsheet','learn','listen','play','sight'];
 let currentPage='home';
 let cofBuilt=false;
 let currentChordType='major';
@@ -1123,6 +1194,8 @@ function nav(page){
   if(page==='learn')initLearn();
   if(page==='listen')initListen();
   if(page!=='listen')stopListen();
+  if(page==='play'){initPlay();}
+  if(page==='sight')initSight();
   if(page==='home')updateHomeStats();
 }
 
@@ -1330,17 +1403,25 @@ function drawGrandStaff(svgId, notes, chordMode=false){
   }
 
   // ── Render each note ──
+  // Track octave correctly as we walk up the scale.
+  // We start at octave 4. Whenever the diatonic step wraps (note name goes DOWN
+  // compared to previous), we increment the octave.
+  const NOTE_ORDER=['C','D','E','F','G','A','B'];
+  let currentOctave=4;
+  let prevNoteIdx=-1;
+
   notes.forEach((noteFull, ni)=>{
     const base=noteFull.replace(/[♯♭]/g,'');
     const hasSharp=noteFull.includes('♯');
     const hasFlat=noteFull.includes('♭');
 
-    // Determine octave: scale notes starting from root
-    // Root is octave 4; if step goes too low assign to octave 4, high notes octave 5
-    // For scale: first note octave 4, walk up
-    const oct = ni===0 ? 4 : (ni < notes.length ? 4 : 5);
-    // For 8-note scale the octave note (index 7) should be octave 5
-    const octave = (ni===7) ? 5 : 4;
+    // Advance octave whenever the note name wraps downward (e.g. B→C)
+    const thisNoteIdx=NOTE_ORDER.indexOf(base);
+    if(ni>0 && thisNoteIdx>=0 && prevNoteIdx>=0 && thisNoteIdx<prevNoteIdx){
+      currentOctave++;
+    }
+    if(thisNoteIdx>=0) prevNoteIdx=thisNoteIdx;
+    const octave=currentOctave;
 
     const step=noteToStep(noteFull, octave);
     const cx=noteStartX + ni*noteSpacing;
@@ -2879,6 +2960,457 @@ function paOpenYouTube(kind){
 }
 
 // ═══════════════════════════════════════════════════════
+// SIGHT READING MODULE
+// ═══════════════════════════════════════════════════════
+
+// ── Tuneful phrase library ──
+// Each phrase is an array of {note, octave, duration} objects.
+// duration: 1=quarter, 0.5=eighth, 2=half, 4=whole
+// Phrases are real melodic fragments, not random dots.
+
+const SR_PHRASES = {
+  beginner: [
+    // Five-finger patterns in C
+    [{n:'C',o:4,d:1},{n:'D',o:4,d:1},{n:'E',o:4,d:1},{n:'F',o:4,d:1},{n:'G',o:4,d:2}],
+    [{n:'G',o:4,d:1},{n:'F',o:4,d:1},{n:'E',o:4,d:1},{n:'D',o:4,d:1},{n:'C',o:4,d:2}],
+    [{n:'C',o:4,d:1},{n:'E',o:4,d:1},{n:'G',o:4,d:1},{n:'E',o:4,d:1},{n:'C',o:4,d:2}],
+    [{n:'E',o:4,d:1},{n:'D',o:4,d:1},{n:'C',o:4,d:1},{n:'D',o:4,d:1},{n:'E',o:4,d:2}],
+    // Ode to Joy opening
+    [{n:'E',o:4,d:1},{n:'E',o:4,d:1},{n:'F',o:4,d:1},{n:'G',o:4,d:1},{n:'G',o:4,d:1},{n:'F',o:4,d:1},{n:'E',o:4,d:1},{n:'D',o:4,d:1}],
+    // Twinkle
+    [{n:'C',o:4,d:1},{n:'C',o:4,d:1},{n:'G',o:4,d:1},{n:'G',o:4,d:1},{n:'A',o:4,d:1},{n:'A',o:4,d:1},{n:'G',o:4,d:2}],
+    // Simple stepwise
+    [{n:'C',o:4,d:1},{n:'D',o:4,d:1},{n:'E',o:4,d:1},{n:'C',o:4,d:1},{n:'E',o:4,d:1},{n:'D',o:4,d:1},{n:'C',o:4,d:2}],
+    [{n:'G',o:4,d:1},{n:'A',o:4,d:1},{n:'G',o:4,d:1},{n:'E',o:4,d:1},{n:'C',o:4,d:2},{n:'D',o:4,d:1},{n:'C',o:4,d:2}],
+  ],
+  intermediate: [
+    // Wider range, some leaps, G major
+    [{n:'G',o:4,d:1},{n:'A',o:4,d:1},{n:'B',o:4,d:1},{n:'C',o:5,d:1},{n:'B',o:4,d:1},{n:'A',o:4,d:1},{n:'G',o:4,d:2}],
+    [{n:'D',o:4,d:1},{n:'F♯',o:4,d:1},{n:'A',o:4,d:1},{n:'F♯',o:4,d:1},{n:'D',o:4,d:1},{n:'E',o:4,d:1},{n:'D',o:4,d:2}],
+    // Thirds
+    [{n:'C',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'D',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'F',o:4,d:1},{n:'E',o:4,d:1}],
+    // Minor feel
+    [{n:'A',o:4,d:1},{n:'G',o:4,d:1},{n:'F',o:4,d:1},{n:'E',o:4,d:1},{n:'D',o:4,d:1},{n:'C',o:4,d:1},{n:'D',o:4,d:1},{n:'E',o:4,d:2}],
+    // Barcarolle-style
+    [{n:'E',o:4,d:1},{n:'G',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'E',o:4,d:1},{n:'D',o:4,d:1},{n:'C',o:4,d:2}],
+    // Bach-style conjunct motion
+    [{n:'C',o:5,d:0.5},{n:'B',o:4,d:0.5},{n:'A',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'D',o:4,d:0.5},{n:'C',o:4,d:1}],
+    // Chord arpeggios
+    [{n:'C',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'C',o:5,d:0.5},{n:'G',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'C',o:4,d:1}],
+  ],
+  advanced: [
+    // Chromatic passages
+    [{n:'C',o:4,d:0.5},{n:'C♯',o:4,d:0.5},{n:'D',o:4,d:0.5},{n:'D♯',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'F♯',o:4,d:0.5},{n:'G',o:4,d:1}],
+    // Modal
+    [{n:'D',o:4,d:1},{n:'E',o:4,d:1},{n:'F',o:4,d:1},{n:'G',o:4,d:1},{n:'A',o:4,d:1},{n:'G',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'E',o:4,d:1},{n:'D',o:4,d:2}],
+    // Wider leaps
+    [{n:'C',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'B',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'D',o:5,d:0.5},{n:'G',o:4,d:0.5},{n:'C',o:5,d:1}],
+    // Syncopated rhythm
+    [{n:'C',o:4,d:0.5},{n:'E',o:4,d:1},{n:'G',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'D',o:4,d:1},{n:'E',o:4,d:0.5},{n:'C',o:4,d:1}],
+    // Jazz-inflected
+    [{n:'C',o:4,d:1},{n:'E',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'B♭',o:4,d:1},{n:'A',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'F',o:4,d:2}],
+    // Alberti bass feel in RH
+    [{n:'E',o:4,d:0.5},{n:'C',o:4,d:0.5},{n:'G',o:4,d:0.5},{n:'C',o:4,d:0.5},{n:'F',o:4,d:0.5},{n:'C',o:4,d:0.5},{n:'E',o:4,d:0.5},{n:'C',o:4,d:0.5}],
+  ],
+};
+
+// ── Chord hints for the cheat-sheet strip ──
+const SR_CHORD_HINTS={
+  beginner: ['C','G','C','F','G','C','Am','G'],
+  intermediate:['G','D','Em','C','G','D','G','C'],
+  advanced:['Cmaj7','Am7','Dm7','G7','Em7','Am7','Dm7','G7'],
+};
+
+let sightState={
+  level:'beginner', phraseIdx:0, noteIdx:0,
+  phrase:[], playing:false, score:0, total:0,
+  listened:false, sessionComplete:false
+};
+
+function initSight(){ renderSightMenu(); }
+
+function renderSightMenu(){
+  const s=sightState;
+  document.getElementById('sight-container').innerHTML=`
+    <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;">
+        <div class="section-label" style="margin-bottom:8px;">Level</div>
+        <div style="display:flex;gap:8px;">
+          ${['beginner','intermediate','advanced'].map(l=>`
+            <button onclick="setSightLevel('${l}',this)"
+              style="flex:1;padding:10px 4px;border-radius:8px;border:1px solid var(--border);
+              background:${s.level===l?'rgba(240,192,64,0.15)':'var(--bg3)'};
+              color:${s.level===l?'var(--gold)':'var(--text2)'};
+              font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation;">
+              ${l==='beginner'?'🟢 Beginner':l==='intermediate'?'🟡 Intermediate':'🟣 Advanced'}
+            </button>`).join('')}
+        </div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;">
+        <div class="section-label" style="margin-bottom:6px;">How it works</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8;">
+          1. The phrase appears on the <strong>grand staff</strong><br>
+          2. Tap <strong>▶ Listen</strong> to hear it played<br>
+          3. Play it yourself on the keyboard<br>
+          4. Each correct note lights <span style="color:var(--green)">green</span>, wrong notes <span style="color:var(--red)">red</span><br>
+          5. Score shown at the end — no stopping for wrong notes!<br>
+          <br>
+          <span style="color:var(--gold)">Chord hints</span> above the staff show the harmony — your cheat sheet while you read.
+        </div>
+      </div>
+      <button onclick="startSight()" style="width:100%;padding:15px;background:linear-gradient(135deg,var(--gold) 0%,var(--orange) 100%);border:none;border-radius:var(--radius);color:#0D1B2A;font-size:16px;font-weight:800;cursor:pointer;touch-action:manipulation;">
+        Start Sight Reading
+      </button>
+      ${s.score>0?`<div style="text-align:center;font-size:13px;color:var(--text2);">Last score: <strong style="color:var(--gold)">${s.score}/${s.total}</strong></div>`:''}
+    </div>`;
+}
+
+function setSightLevel(level, btn){
+  sightState.level=level;
+  renderSightMenu();
+}
+
+function startSight(){
+  const level=sightState.level;
+  const phrases=SR_PHRASES[level];
+  sightState.phraseIdx=Math.floor(Math.random()*phrases.length);
+  sightState.phrase=phrases[sightState.phraseIdx];
+  sightState.noteIdx=0;
+  sightState.score=0;
+  sightState.total=sightState.phrase.length;
+  sightState.played=new Array(sightState.phrase.length).fill(null); // null=unplayed, true=correct, false=wrong
+  sightState.listened=false;
+  sightState.sessionComplete=false;
+  renderSightExercise();
+}
+
+function renderSightExercise(){
+  const {phrase, noteIdx, level, listened} = sightState;
+  const chordHints=SR_CHORD_HINTS[level];
+  const phraseIdx=sightState.phraseIdx;
+  const hint=chordHints[phraseIdx%chordHints.length];
+
+  document.getElementById('sight-subtitle').textContent=
+    `${level.charAt(0).toUpperCase()+level.slice(1)} · note ${noteIdx+1} of ${phrase.length}`;
+
+  document.getElementById('sight-container').innerHTML=`
+    <!-- Chord cheat-sheet strip -->
+    <div style="padding:6px 14px 4px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;">
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);">Chord:</span>
+      <span style="font-size:18px;font-weight:900;color:var(--gold);">${hint}</span>
+      <span style="font-size:11px;color:var(--text2);margin-left:auto;">Play along hint</span>
+    </div>
+
+    <!-- Grand staff display -->
+    <div style="padding:8px 14px 4px;">
+      <svg id="sight-staff-svg" width="340" height="170" style="display:block;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;"></svg>
+    </div>
+
+    <!-- Progress dots -->
+    <div style="display:flex;justify-content:center;gap:5px;padding:4px 14px;">
+      ${phrase.map((_,i)=>{
+        const p=sightState.played?.[i];
+        return `<div style="width:${p===null?8:10}px;height:${p===null?8:10}px;border-radius:50%;
+          background:${p===true?'var(--green)':p===false?'var(--red)':i===noteIdx?'var(--gold)':'var(--border)'};
+          transition:all 0.2s;border:${i===noteIdx?'2px solid var(--gold2)':'none'};"></div>`;
+      }).join('')}
+    </div>
+
+    <!-- Controls -->
+    <div style="padding:8px 14px;display:flex;gap:8px;flex-shrink:0;">
+      <button onclick="listenPhrase()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;
+        background:rgba(74,158,232,0.15);border:1px solid var(--accent);border-radius:var(--radius-sm);
+        color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        ${listened?'Listen again':'▶ Listen first'}
+      </button>
+      <button onclick="nextPhrase()" style="flex:1;padding:12px;
+        background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+        color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;">
+        Next phrase →
+      </button>
+    </div>
+
+    <div style="padding:0 14px;font-size:12px;color:var(--text3);text-align:center;">
+      ${listened
+        ? 'Now play the notes on your keyboard — no stopping for wrong notes!'
+        : 'Listen to the phrase first, then play it back.'}
+    </div>
+
+    <!-- Score badge if some played -->
+    ${sightState.played?.some(p=>p!==null)?`
+    <div style="padding:8px 14px 4px;display:flex;justify-content:center;gap:16px;">
+      <span style="font-size:12px;font-weight:700;color:var(--green);">✓ ${sightState.played.filter(p=>p===true).length} correct</span>
+      <span style="font-size:12px;font-weight:700;color:var(--red);">✗ ${sightState.played.filter(p=>p===false).length} wrong</span>
+    </div>`:''}
+
+    <!-- Back button -->
+    <div style="padding:8px 14px;">
+      <button onclick="renderSightMenu()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text3);font-size:12px;font-weight:700;cursor:pointer;">
+        ← Back to menu
+      </button>
+    </div>
+  `;
+
+  // Draw staff with the phrase
+  drawSightStaff();
+}
+
+function drawSightStaff(){
+  const {phrase, noteIdx, played} = sightState;
+  const svg=document.getElementById('sight-staff-svg');
+  if(!svg)return;
+  svg.innerHTML='';
+  const W=parseInt(svg.getAttribute('width'))||340;
+  const H=170;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const LS=8, trebleTop=14, bassTop=trebleTop+LS*4+24;
+  const noteStartX=44, noteSpacing=Math.min(34,Math.max(22,(W-noteStartX-10)/Math.max(phrase.length,1)));
+  const trebleBottomY=trebleTop+LS*4;
+  const middleCY=trebleBottomY+LS;
+  const col=getComputedStyle(document.documentElement);
+  const lineCol=col.getPropertyValue('--staff-line').trim()||'#5A7898';
+
+  // Draw staff lines
+  [trebleTop,bassTop].forEach(top=>{
+    for(let i=0;i<5;i++){
+      const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('x1','24');l.setAttribute('x2',W-6+'');
+      l.setAttribute('y1',top+i*LS+'');l.setAttribute('y2',top+i*LS+'');
+      l.setAttribute('stroke',lineCol);l.setAttribute('stroke-width','0.8');
+      svg.appendChild(l);
+    }
+  });
+
+  // Clefs
+  const tc=document.createElementNS('http://www.w3.org/2000/svg','text');
+  tc.setAttribute('x','4');tc.setAttribute('y',trebleTop+LS*4+3+'');
+  tc.setAttribute('font-size','38');tc.setAttribute('fill',lineCol);tc.setAttribute('font-family','serif');
+  tc.textContent='𝄞';svg.appendChild(tc);
+  const bc=document.createElementNS('http://www.w3.org/2000/svg','text');
+  bc.setAttribute('x','6');bc.setAttribute('y',bassTop+LS*2+3+'');
+  bc.setAttribute('font-size','22');bc.setAttribute('fill',lineCol);bc.setAttribute('font-family','serif');
+  bc.textContent='𝄢';svg.appendChild(bc);
+
+  // Brace
+  const br=document.createElementNS('http://www.w3.org/2000/svg','path');
+  br.setAttribute('d',`M 16 ${trebleTop-1} Q 11 ${(trebleTop+bassTop+LS*4)/2} 16 ${bassTop+LS*4+1}`);
+  br.setAttribute('stroke',lineCol);br.setAttribute('stroke-width','1.5');br.setAttribute('fill','none');
+  svg.appendChild(br);
+
+  const NOTE_ORDER_SR=['C','D','E','F','G','A','B'];
+  const baseStepsSR={'C':0,'D':1,'E':2,'F':3,'G':4,'A':5,'B':6};
+  function stepToY(step){ return trebleBottomY-(step+2)*(LS/2); }
+
+  let curOct=4, prevIdx=-1;
+
+  phrase.forEach((nr,ni)=>{
+    const base=nr.n.replace(/[♯♭]/g,'');
+    const thisIdx=NOTE_ORDER_SR.indexOf(base);
+    if(ni>0&&thisIdx>=0&&prevIdx>=0&&thisIdx<prevIdx) curOct++;
+    if(thisIdx>=0) prevIdx=thisIdx;
+    const oct=nr.o||curOct; // use explicit octave if given
+    const step=(oct-4)*7+(baseStepsSR[base]??0);
+    const cx=noteStartX+ni*noteSpacing;
+    const cy=stepToY(step);
+    const isCurrentNote=(ni===noteIdx);
+    const playResult=played?.[ni];
+
+    // Note colour: green=correct, red=wrong, gold=current, white=unplayed
+    const noteCol=playResult===true?'#4AC868':playResult===false?'#E85050':isCurrentNote?'#F0C040':'var(--note-fill,#E8F0F8)';
+    const strokeCol=playResult===true?'#2a9a4a':playResult===false?'#C82020':isCurrentNote?'#C8982A':'var(--note-stroke,#8BAAC8)';
+
+    // Middle C ledger line
+    if(step===0){
+      const ll=document.createElementNS('http://www.w3.org/2000/svg','line');
+      ll.setAttribute('x1',cx-8+'');ll.setAttribute('x2',cx+8+'');
+      ll.setAttribute('y1',middleCY+'');ll.setAttribute('y2',middleCY+'');
+      ll.setAttribute('stroke',lineCol);ll.setAttribute('stroke-width','0.8');
+      svg.appendChild(ll);
+    }
+    // Accidental
+    if(nr.n.includes('♯')||nr.n.includes('♭')){
+      const acc=document.createElementNS('http://www.w3.org/2000/svg','text');
+      acc.setAttribute('x',cx-11+'');acc.setAttribute('y',cy+3+'');
+      acc.setAttribute('font-size','10');acc.setAttribute('fill',noteCol);acc.setAttribute('font-family','serif');
+      acc.textContent=nr.n.includes('♯')?'♯':'♭';
+      svg.appendChild(acc);
+    }
+    // Note head
+    const el=document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+    el.setAttribute('cx',cx+'');el.setAttribute('cy',cy+'');
+    el.setAttribute('rx','5');el.setAttribute('ry','3.8');
+    el.setAttribute('fill',noteCol);el.setAttribute('stroke',strokeCol);el.setAttribute('stroke-width','1');
+    svg.appendChild(el);
+    // Stem
+    const stemUp=step<4;
+    const stemX=stemUp?cx+5:cx-5;
+    const stem=document.createElementNS('http://www.w3.org/2000/svg','line');
+    stem.setAttribute('x1',stemX+'');stem.setAttribute('x2',stemX+'');
+    stem.setAttribute('y1',cy+'');stem.setAttribute('y2',(stemUp?cy-22:cy+22)+'');
+    stem.setAttribute('stroke',strokeCol);stem.setAttribute('stroke-width','1.2');
+    svg.appendChild(stem);
+    // Note name below (for learning)
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',cx+'');lbl.setAttribute('y',H-2+'');
+    lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-size','8');
+    lbl.setAttribute('fill',isCurrentNote?'#F0C040':lineCol);
+    lbl.setAttribute('font-family','Inter,sans-serif');lbl.setAttribute('font-weight','700');
+    lbl.textContent=nr.n;
+    svg.appendChild(lbl);
+  });
+}
+
+function listenPhrase(){
+  sightState.listened=true;
+  const phrase=sightState.phrase;
+  let delay=0;
+  phrase.forEach(nr=>{
+    const midi=noteNameToMidi(nr.n, nr.o||4);
+    setTimeout(()=>playNote(midiToFreq(midi), nr.d*0.5, 0.3), delay);
+    delay+=nr.d*400;
+  });
+  // Re-render to update button text
+  setTimeout(()=>renderSightExercise(), 100);
+}
+
+function nextPhrase(){
+  const phrases=SR_PHRASES[sightState.level];
+  sightState.phraseIdx=(sightState.phraseIdx+1)%phrases.length;
+  sightState.phrase=phrases[sightState.phraseIdx];
+  sightState.noteIdx=0;
+  sightState.total=sightState.phrase.length;
+  sightState.played=new Array(sightState.phrase.length).fill(null);
+  sightState.listened=false;
+  renderSightExercise();
+}
+
+// Called from MIDI to check played notes against the current phrase
+function sightCheckMidi(midiNote){
+  if(currentPage!=='sight') return;
+  const {phrase, noteIdx, sessionComplete} = sightState;
+  if(sessionComplete||noteIdx>=phrase.length) return;
+
+  const expected=phrase[noteIdx];
+  const expectedMidi=noteNameToMidi(expected.n, expected.o||4);
+  // Match on pitch class (any octave) — forgiving for beginners
+  const isCorrect=(midiNote%12===expectedMidi%12);
+
+  sightState.played[noteIdx]=isCorrect;
+  if(isCorrect) sightState.score++;
+  sightState.noteIdx++;
+
+  if(sightState.noteIdx>=phrase.length){
+    sightState.sessionComplete=true;
+    renderSightComplete();
+  } else {
+    drawSightStaff(); // update colours without full re-render
+    // Auto-scroll dot row
+    const dots=document.querySelectorAll('#sight-container > div > div > div');
+    if(dots[sightState.noteIdx]) dots[sightState.noteIdx].scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
+}
+
+function renderSightComplete(){
+  const {score, total, level} = sightState;
+  const pct=Math.round(score/total*100);
+  const grade=pct===100?'Perfect! 🌟':pct>=80?'Excellent! 🎵':pct>=60?'Good effort! 👍':'Keep practising! 📖';
+  document.getElementById('sight-container').innerHTML=`
+    <div style="padding:28px 14px;text-align:center;display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:48px;">${pct===100?'🌟':pct>=80?'🎵':pct>=60?'👍':'📖'}</div>
+      <div style="font-size:22px;font-weight:800;color:var(--gold);">${grade}</div>
+      <div style="font-size:14px;color:var(--text2);">${score} of ${total} notes correct · ${pct}%</div>
+      <div style="display:flex;justify-content:center;gap:20px;margin:8px 0;">
+        <div style="text-align:center;"><div style="font-size:28px;font-weight:800;color:var(--green);">${score}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;">Correct</div></div>
+        <div style="text-align:center;"><div style="font-size:28px;font-weight:800;color:var(--red);">${total-score}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;">Missed</div></div>
+        <div style="text-align:center;"><div style="font-size:28px;font-weight:800;color:var(--gold);">${pct}%</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;">Score</div></div>
+      </div>
+      <button onclick="nextPhrase()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--gold) 0%,var(--orange) 100%);border:none;border-radius:var(--radius);color:#0D1B2A;font-size:15px;font-weight:800;cursor:pointer;">
+        Next Phrase →
+      </button>
+      <button onclick="renderSightMenu()" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;">
+        Back to Menu
+      </button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// PLAY PAGE — circle + grand staff + keyboard, MIDI live
+// ═══════════════════════════════════════════════════════
+let playPageBuilt=false;
+let playLastMidi=-1;
+
+function initPlay(){
+  if(!playPageBuilt){ buildPlayPage(); playPageBuilt=true; }
+}
+
+function buildPlayPage(){
+  const root=document.getElementById('play-root')?.value||'C';
+  const scaleType=document.getElementById('play-scale')?.value||'major';
+  const scaleNotes=buildScale(root,scaleType);
+
+  // Circle
+  buildMiniCOF('play-cof-svg', null); // no pre-highlighted key yet
+
+  // Staff — show key signature notes as a reference
+  const notes8=scaleNotes.length>=7?[...scaleNotes.slice(0,7),scaleNotes[0]]:[...scaleNotes,scaleNotes[0]];
+  drawGrandStaff('play-staff-svg', notes8);
+
+  // Piano — highlight scale in blue, root in gold
+  buildPianoUI('play-piano', scaleNotes, root, 2, 3);
+}
+
+function updatePlayPage(){
+  playPageBuilt=false;
+  buildPlayPage();
+  playLastMidi=-1;
+  const noteDisp=document.getElementById('play-note-display');
+  if(noteDisp)noteDisp.innerHTML='<div style="font-size:11px;color:var(--text3);">Play a note — circle, staff &amp; keyboard respond</div>';
+}
+
+// Called from MIDI handleMidi — updates all three panels live
+function updatePlayPageFromMidi(midiNote, on){
+  if(currentPage!=='play')return;
+  if(!on){ playLastMidi=-1; return; }
+  if(midiNote===playLastMidi)return;
+  playLastMidi=midiNote;
+
+  const pc=midiNote%12;
+  const noteName=CHROM_S[pc];
+  const octave=Math.floor(midiNote/12)-1;
+  const noteFullName=noteName+octave;
+
+  // ── 1. Circle: highlight the matching key segment ──
+  const idx=CIRCLE.findIndex(k=>NOTE_IDX[k.major]===pc);
+  const key=idx>=0?CIRCLE[idx]:null;
+  buildMiniCOF('play-cof-svg', key?key.major:null);
+
+  // Update note display below circle
+  const disp=document.getElementById('play-note-display');
+  if(disp){
+    const col=key?KEY_COLORS[idx]:'var(--text2)';
+    disp.innerHTML=`
+      <div style="font-size:30px;font-weight:900;color:${col};line-height:1;letter-spacing:-0.02em;">${noteName}<span style="font-size:16px;color:var(--text3);font-weight:600">${octave}</span></div>
+      ${key?`<div style="font-size:11px;color:var(--text2);margin-top:2px;">
+        <strong style="color:${col}">${key.major} major</strong> · relative minor <strong>${key.minor}</strong>
+      </div>`:''}`;
+  }
+
+  // ── 2. Staff: show the played note as a green dot ──
+  highlightStaffNote(midiNote, true);
+
+  // ── 3. Keyboard: highlight on the play-piano ──
+  const piano=document.getElementById('play-piano');
+  if(piano){
+    piano.querySelectorAll('.piano-key.pressed').forEach(k=>k.classList.remove('pressed'));
+    piano.querySelectorAll('.piano-key[data-midi]').forEach(k=>{
+      const m=parseInt(k.dataset.midi);
+      const match=m===midiNote || m%12===pc;
+      if(match)k.classList.add('pressed');
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════
 // LEAD SHEET CREATOR — build, hear & print chord charts
 // ═══════════════════════════════════════════════════════
 let lsData={
@@ -3557,7 +4089,11 @@ function initTheme(){
 // ═══════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════
-initTheme();updateHomeStats();initMidi();requestAnimationFrame(updateMidiButton);
+initTheme();updateHomeStats();initMidi();
+
+function showAbout(){
+  alert('KeyMaster Pro\n© 2026 MusicAppsUK\nAll rights reserved.\n\nCircle of Fifths & Music Theory Trainer\n\nBuilt with Web Audio API, Web MIDI API\nand a lot of dedication!\n\nVisit: musicappsuk.github.io/Key-Master-Pro');
+}requestAnimationFrame(updateMidiButton);
 try{const sv=localStorage.getItem('kmpScaleView');if(sv){scaleViewMode=sv;}}catch(e){}
 try{const cv=localStorage.getItem('kmpChordView');if(cv){chordViewMode=cv;}}catch(e){}
 </script>
