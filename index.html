@@ -1193,8 +1193,12 @@ function highlightStaffNote(midiNote, on){
   const y = useBass
     ? bassTop-(step+2)*(LS/2)
     : trebleBottomY-(step-2)*(LS/2);
-  const W=parseInt(svg.getAttribute('width'))||360;
-  const x=W*0.5;
+  // Use the viewBox width (the staff may be very wide for multi-octave scales).
+  // Place the live marker at a FIXED, always-visible spot just after the clef,
+  // so it never scrolls off-screen regardless of how wide the staff is.
+  const vb=svg.viewBox&&svg.viewBox.baseVal&&svg.viewBox.baseVal.width;
+  const W=vb||parseInt(svg.getAttribute('width'))||360;
+  const x=72;  // fixed position just right of the clef + time signature
 
   // ── Ledger lines ──
   // Middle C (step 0): ledger just below treble OR just above bass — draw on treble side
@@ -1240,15 +1244,27 @@ function highlightStaffNote(midiNote, on){
   dot.setAttribute('stroke-width','1.5');
   svg.appendChild(dot);
 
+  // Note name + octave label, sitting just to the RIGHT of the note on its own clef
   const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
   lbl.setAttribute('class',id);
-  lbl.setAttribute('x', x); lbl.setAttribute('y', 14);
-  lbl.setAttribute('text-anchor','middle');
-  lbl.setAttribute('font-size','12'); lbl.setAttribute('font-weight','800');
+  lbl.setAttribute('x', x+12); lbl.setAttribute('y', y+4);
+  lbl.setAttribute('text-anchor','start');
+  lbl.setAttribute('font-size','13'); lbl.setAttribute('font-weight','800');
   lbl.setAttribute('fill',fill);
   lbl.setAttribute('font-family','Inter,sans-serif');
   lbl.textContent=names[pc]+(sharp[pc]?'♯':'')+octave;
   svg.appendChild(lbl);
+
+  // Small clef indicator so it's clear which staff the note is on
+  const clefTag=document.createElementNS('http://www.w3.org/2000/svg','text');
+  clefTag.setAttribute('class',id);
+  clefTag.setAttribute('x', x+12); clefTag.setAttribute('y', y+16);
+  clefTag.setAttribute('text-anchor','start');
+  clefTag.setAttribute('font-size','8'); clefTag.setAttribute('font-weight','600');
+  clefTag.setAttribute('fill','var(--text3)');
+  clefTag.setAttribute('font-family','Inter,sans-serif');
+  clefTag.textContent=useBass?'bass':'treble';
+  svg.appendChild(clefTag);
 }
 
 function showMidiNote(midiNote){
@@ -2909,7 +2925,7 @@ document.getElementById('install-yes').addEventListener('click',async()=>{
 document.getElementById('install-no').addEventListener('click',()=>{document.getElementById('install-banner').classList.remove('show');});
 
 // ── App version (bump this each release to match sw.js cache name) ──
-const APP_VERSION='v35';
+const APP_VERSION='v37';
 
 if('serviceWorker' in navigator){
   let refreshing=false;
