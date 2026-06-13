@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<meta name="theme-color" content="#0D1B2A"/>
+<meta name="theme-color" content="#38A3E0"/>
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
   script-src 'self' 'unsafe-inline';
@@ -175,7 +175,7 @@ input,select{font-family:inherit;}
 .stat-lbl{font-size:9px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:0.05em;}
 
 /* ═══════════════════════ PIANO KEYBOARD ═══════════════════════ */
-.piano-wrap{overflow-x:auto;padding:12px 16px;scrollbar-width:none;}
+.piano-wrap{padding:8px 16px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
 .piano-wrap::-webkit-scrollbar{display:none;}
 .piano-keyboard{display:flex;align-items:flex-start;position:relative;height:110px;width:max-content;min-width:100%;justify-content:center;}
 .wkey{width:36px;height:110px;background:var(--piano-white,linear-gradient(180deg,#e8f0f8 0%,#c8d8e8 100%));border:1px solid var(--piano-white-border,#5a7898);border-radius:0 0 6px 6px;position:relative;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:10px;font-weight:700;color:var(--piano-white-text,#5a7898);transition:all 0.08s;flex-shrink:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;}
@@ -427,10 +427,13 @@ input,select{font-family:inherit;}
 .pa-search-all:active{opacity:0.88;}
 
 
+.piano-key.playing{background:linear-gradient(180deg,#7CC8F0 0%,#38A3E0 100%)!important;box-shadow:0 0 10px rgba(56,163,224,0.7)!important;}
+.bkey.piano-key.playing{background:linear-gradient(180deg,#2882BE 0%,#1A6BA0 100%)!important;}
+
 /* ═══════════════════════ VIEW MODE SWITCHER ═══════════════════════ */
-.view-mode-bar{display:flex;gap:4px;padding:8px 14px 6px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--border);}
+.view-mode-bar{display:flex;gap:6px;padding:10px 14px 8px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--border);}
 .view-mode-bar::-webkit-scrollbar{display:none;}
-.vm-btn{flex-shrink:0;padding:5px 11px;border-radius:16px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg3);color:var(--text3);cursor:pointer;touch-action:manipulation;white-space:nowrap;transition:all 0.15s;}
+.vm-btn{flex-shrink:0;padding:9px 15px;border-radius:18px;font-size:13px;font-weight:700;border:1px solid var(--border);background:var(--bg3);color:var(--text3);cursor:pointer;touch-action:manipulation;white-space:nowrap;transition:all 0.15s;}
 .vm-btn.active{background:rgba(240,192,64,0.15);border-color:var(--gold2);color:var(--gold);}
 /* Focus mode: big note display */
 .focus-note-display{text-align:center;padding:14px 14px 6px;}
@@ -481,7 +484,7 @@ input,select{font-family:inherit;}
   <!-- Branded splash — shows briefly on load, fades out -->
   <div id="splash" style="
     position:fixed;inset:0;z-index:999;
-    background:linear-gradient(160deg,#0D1B2A 0%,#162D45 100%);
+    background:linear-gradient(160deg,#FFFFFF 0%,#EAF6FF 100%);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
     transition:opacity 0.4s ease;
   ">
@@ -489,9 +492,9 @@ input,select{font-family:inherit;}
       style="width:96px;height:96px;border-radius:22px;box-shadow:0 8px 32px rgba(0,0,0,0.5);"
       onerror="this.style.display='none'"/>
     <div style="text-align:center;">
-      <div style="font-size:26px;font-weight:900;color:#F0C040;letter-spacing:-0.02em;">KeyMaster Pro</div>
-      <div style="font-size:12px;color:#8BAAC8;margin-top:4px;">Circle of Fifths &amp; Music Theory Trainer</div>
-      <div style="font-size:10px;color:#5A7898;margin-top:3px;letter-spacing:0.05em;">by MusicAppsUK</div>
+      <div style="font-size:26px;font-weight:900;color:#2882BE;letter-spacing:-0.02em;">KeyMaster Pro</div>
+      <div style="font-size:12px;color:#5A7898;margin-top:4px;">Circle of Fifths &amp; Music Theory Trainer</div>
+      <div style="font-size:10px;color:#38A3E0;margin-top:3px;letter-spacing:0.05em;">by MusicAppsUK</div>
     </div>
   </div>
   <div id="install-banner">
@@ -532,12 +535,6 @@ input,select{font-family:inherit;}
         <div class="home-card" onclick="nav('listen')"><span class="hc-icon">🎤</span><h3>Note Listener</h3><p>Detect notes by mic</p></div>
         <div class="home-card" onclick="nav('play')"><span class="hc-icon">🎵</span><h3>Play</h3><p>Circle · staff · keyboard live</p></div>
         <div class="home-card" onclick="nav('sight')"><span class="hc-icon">📖</span><h3>Sight Reading</h3><p>Read · listen · play</p></div>
-      </div>
-      <div class="home-stats">
-        <div class="stat-card"><div class="stat-val" id="stat-q">0</div><div class="stat-lbl">Questions</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-c">0</div><div class="stat-lbl">Correct</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-s">0</div><div class="stat-lbl">Best Streak</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-e">0%</div><div class="stat-lbl">Best Ear</div></div>
       </div>
     </div>
 
@@ -1007,12 +1004,34 @@ function playNoteByName(name,octave=4,dur=0.8,vol=0.3){
   playNote(midiToFreq(noteNameToMidi(name,octave)),dur,vol);
 }
 
+// ── Highlight a key + staff note temporarily during playback ──
+function flashKeyOnPlayback(midiNote, durationMs){
+  const activePage=document.querySelector('.page.active');
+  if(!activePage)return;
+  // Light keyboard key
+  const keys=activePage.querySelectorAll('.piano-key[data-midi]');
+  const pc=midiNote%12;
+  let exact=false;
+  keys.forEach(k=>{ if(parseInt(k.dataset.midi)===midiNote)exact=true; });
+  const lit=[];
+  keys.forEach(k=>{
+    const m=parseInt(k.dataset.midi);
+    if(exact?(m===midiNote):(m%12===pc)){ k.classList.add('playing'); lit.push(k); }
+  });
+  // Light staff note
+  highlightStaffNote(midiNote, true);
+  setTimeout(()=>{
+    lit.forEach(k=>k.classList.remove('playing'));
+    highlightStaffNote(midiNote, false);
+  }, durationMs||300);
+}
+
 function playChordNow(){
   const root=document.getElementById('chord-root')?.value||'C';
   const cd=CHORDS[currentChordType]; if(!cd)return;
   const rootMidi=noteNameToMidi(root,4);
   // Use raw semitone intervals so extensions (9th=14, 13th=21) voice ABOVE the root
-  cd.intervals.forEach(iv=>playNote(midiToFreq(rootMidi+iv),1.2,0.22));
+  cd.intervals.forEach(iv=>{ playNote(midiToFreq(rootMidi+iv),1.2,0.22); flashKeyOnPlayback(rootMidi+iv,1000); });
 }
 
 function playScaleNow(descending=false){
@@ -1030,7 +1049,7 @@ function playScaleNow(descending=false){
   let seq = midis.length>8 ? [...midis.slice(0,7), rootMidi+12] : midis;
   if(descending) seq=[...seq].reverse();
   seq.forEach((midi,i)=>{
-    setTimeout(()=>playNote(midiToFreq(midi),0.55,0.3), i*210);
+    setTimeout(()=>{ playNote(midiToFreq(midi),0.55,0.3); flashKeyOnPlayback(midi,260); }, i*210);
   });
 }
 
@@ -1041,7 +1060,7 @@ function playScaleAsc(root, type, noteGap=180, dur=0.45, vol=0.27){
   const midis=[m];
   for(const step of sc.intervals){ m+=step; midis.push(m); }
   const seq = midis.length>8 ? [...midis.slice(0,7), midis[0]+12] : midis;
-  seq.forEach((midi,i)=>setTimeout(()=>playNote(midiToFreq(midi),dur,vol), i*noteGap));
+  seq.forEach((midi,i)=>setTimeout(()=>{ playNote(midiToFreq(midi),dur,vol); flashKeyOnPlayback(midi,noteGap+40); }, i*noteGap));
 }
 function playScale(){playScaleNow(false);}
 function playScaleDescending(){playScaleNow(true);}
@@ -1244,13 +1263,15 @@ function updateStats(correct,isEar=false){
   else p.streak=0;
   save(p);updateHomeStats();
 }
-function updateHomeStats(){
+function updateHomeStats(){ return; /* stats panel removed for cleaner home */ 
+  if(false){
   const s=getStats();
   const el=id=>document.getElementById(id);
   if(el('stat-q'))el('stat-q').textContent=s.q;
   if(el('stat-c'))el('stat-c').textContent=s.c;
   if(el('stat-s'))el('stat-s').textContent=s.s;
   if(el('stat-e'))el('stat-e').textContent=(s.earBest||0)+'%';
+}
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1371,8 +1392,8 @@ function drawGrandStaff(svgId, notes, chordMode=false){
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
   const LS=9;           // line spacing px — slightly larger for readability
-  const trebleTop=16;   // y of top treble staff line (F5)
-  const gap=26;         // px gap between bottom of treble and top of bass staff
+  const trebleTop=18;   // y of top treble staff line (F5)
+  const gap=52;         // px gap — MUCH wider so the two staves don't intertwine
   const bassTop=trebleTop+LS*4+gap;
   const clefX=6;
   const noteStartX=54;
@@ -1416,8 +1437,8 @@ function drawGrandStaff(svgId, notes, chordMode=false){
   svg.appendChild(trebleClef);
 
   const bassClef=document.createElementNS('http://www.w3.org/2000/svg','text');
-  bassClef.setAttribute('x',clefX+2+'');bassClef.setAttribute('y',bassTop+LS*2+4+'');
-  bassClef.setAttribute('font-size','30');bassClef.setAttribute('fill',colours.line);
+  bassClef.setAttribute('x',clefX+'');bassClef.setAttribute('y',bassTop+LS*3+2+'');
+  bassClef.setAttribute('font-size','46');bassClef.setAttribute('fill',colours.line);
   bassClef.setAttribute('font-family','serif');bassClef.textContent='𝄢';
   svg.appendChild(bassClef);
 
@@ -1827,7 +1848,7 @@ function updateScale(){
       <div class="deg-note${(i===0||i===7)?' root':''}">${n}</div>
     </div>`).join('')}</div>`;
 
-  const staffHTML=`<div class="staff-wrap"><svg id="scale-staff-svg" width="360" height="200"></svg></div>`;
+  const staffHTML=`<div class="staff-wrap"><svg id="scale-staff-svg" width="360" height="240"></svg></div>`;
   const pianoHTML=`<div class="piano-wrap"><div class="piano-keyboard" id="scale-piano"></div></div>`;
   const playHTML=`<div style="padding:0 16px 8px;display:flex;gap:8px;">
     <button class="play-btn" onclick="playScale()" style="flex:1;justify-content:center;">
@@ -1931,7 +1952,7 @@ function updateScale(){
     // Build the mini circle
     requestAnimationFrame(()=>{
       buildMiniCOF('scale-cof-mini', root);
-      buildPianoUI('scale-piano', baseNotes, root, 2, 3);
+      buildPianoUI('scale-piano', baseNotes, root, 4, 2);
       drawGrandStaff('scale-staff-svg', notes8);
     });
   }
@@ -1940,7 +1961,7 @@ function updateScale(){
   if(view!=='circle'){
     requestAnimationFrame(()=>{
       const piano=document.getElementById('scale-piano');
-      if(piano)buildPianoUI('scale-piano',baseNotes,root,view==='focus'?1:2,3);
+      if(piano)buildPianoUI('scale-piano',baseNotes,root,view==='focus'?2:4,2);
       drawGrandStaff('scale-staff-svg',notes8);
     });
   }
@@ -1962,7 +1983,7 @@ function switchScaleTab(id,btn){
   if(id==='st-piano')requestAnimationFrame(()=>{
     const root=document.getElementById('scale-root')?.value||'C';
     const type=document.getElementById('scale-type')?.value||'major';
-    buildPianoUI('scale-piano',buildScale(root,type),root,2,3);
+    buildPianoUI('scale-piano',buildScale(root,type),root,4,2);
   });
 }
 
@@ -1984,7 +2005,7 @@ function toggleScaleSection(contentId,btnId){
     if(contentId==='sc-piano')requestAnimationFrame(()=>{
       const root=document.getElementById('scale-root')?.value||'C';
       const type=document.getElementById('scale-type')?.value||'major';
-      buildPianoUI('scale-piano',buildScale(root,type),root,2,3);
+      buildPianoUI('scale-piano',buildScale(root,type),root,4,2);
     });
   }
 }
@@ -2149,14 +2170,14 @@ function updateChord(){
 
   const chordHTML   = getChordDisplayHTML(root);
   const typeHTML    = getChordTypeScrollHTML();
-  const staffHTML   = `<div class="staff-wrap"><svg id="chord-staff-svg" width="360" height="160"></svg></div>`;
+  const staffHTML   = `<div class="staff-wrap"><svg id="chord-staff-svg" width="360" height="240"></svg></div>`;
   const pianoHTML   = `<div class="piano-wrap"><div class="piano-keyboard" id="chord-piano"></div></div>`;
   const playHTML    = `<div style="padding:0 16px 10px;"><button class="play-btn" onclick="playChord()" style="width:100%;justify-content:center;"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>Play Chord</button></div>`;
   const diaLabel    = `<div style="padding:0 16px 4px;"><div class="section-label">Diatonic chords</div>${buildDiatonicChipsHTML()}</div>`;
   const diaGrid     = getDiatonicGridHTML(root);
 
   if(view==='standard'){
-    container.innerHTML = typeHTML+chordHTML+staffHTML+pianoHTML+playHTML+diaLabel+diaGrid;
+    container.innerHTML = typeHTML+chordHTML+staffHTML+pianoHTML+diaLabel+diaGrid+playHTML;
   }
   else if(view==='tabbed'){
     container.innerHTML=`
@@ -2237,7 +2258,7 @@ function updateChord(){
       ${playHTML}`;
     requestAnimationFrame(()=>{
       buildMiniCOF('chord-cof-mini', root);
-      buildPianoUI('chord-piano', notes, root, 2, 3);
+      buildPianoUI('chord-piano', notes, root, 4, 2);
       drawGrandStaff('chord-staff-svg', notes);
     });
   }
@@ -2245,7 +2266,7 @@ function updateChord(){
   // Rebuild piano + staff for non-circle views
   if(view!=='circle'){
     requestAnimationFrame(()=>{
-      if(document.getElementById('chord-piano'))buildPianoUI('chord-piano',notes,root,view==='focus'?1:2,3);
+      if(document.getElementById('chord-piano'))buildPianoUI('chord-piano',notes,root,view==='focus'?2:4,2);
       drawGrandStaff('chord-staff-svg',notes);
     });
   }
@@ -2262,7 +2283,7 @@ function switchChordTab(id,btn){
   });
   if(id==='ct-piano')requestAnimationFrame(()=>{
     const root=document.getElementById('chord-root')?.value||'C';
-    buildPianoUI('chord-piano',buildChord(root,currentChordType),root,2,3);
+    buildPianoUI('chord-piano',buildChord(root,currentChordType),root,4,2);
   });
 }
 
@@ -2280,7 +2301,7 @@ function toggleChordSection(contentId,btnId){
     });
     if(contentId==='cc-piano')requestAnimationFrame(()=>{
       const root=document.getElementById('chord-root')?.value||'C';
-      buildPianoUI('chord-piano',buildChord(root,currentChordType),root,2,3);
+      buildPianoUI('chord-piano',buildChord(root,currentChordType),root,4,2);
     });
   }
 }
@@ -3851,12 +3872,13 @@ function listenLesson(){
   bar.rh.forEach(note=>{
     if(!note.rest){
       const midi=noteNameToMidi(note.n, note.o||4);
-      setTimeout(()=>playNote(midiToFreq(midi), note.d*0.4, 0.3), delay);
+      const dms=note.d*beatMs*0.9;
+      setTimeout(()=>{ playNote(midiToFreq(midi), note.d*0.4, 0.3); flashKeyOnPlayback(midi, dms); }, delay);
     }
     if(note.chord&&!note.rest){
       note.chord.forEach(cn=>{
         const cm=noteNameToMidi(cn, note.o||4);
-        setTimeout(()=>playNote(midiToFreq(cm), note.d*0.4, 0.2), delay);
+        setTimeout(()=>{ playNote(midiToFreq(cm), note.d*0.4, 0.2); flashKeyOnPlayback(cm, note.d*beatMs*0.9); }, delay);
       });
     }
     delay+=note.d*beatMs;
@@ -4006,7 +4028,7 @@ function buildPlayPage(){
   drawGrandStaff('play-staff-svg', notes8);
 
   // Piano — highlight scale in blue, root in gold
-  buildPianoUI('play-piano', scaleNotes, root, 2, 3);
+  buildPianoUI('play-piano', scaleNotes, root, 4, 2);
 }
 
 function updatePlayPage(){
@@ -4558,7 +4580,7 @@ function renderListen(){
 
 function updateListenKeyboard(){
   const notes=buildScale(listenScaleRoot, listenScaleType);
-  buildPianoUI('listen-piano', notes, listenScaleRoot, 2, 3);
+  buildPianoUI('listen-piano', notes, listenScaleRoot, 4, 2);
 }
 
 function toggleListen(){
