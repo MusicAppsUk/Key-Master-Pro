@@ -246,7 +246,8 @@ input,select{font-family:inherit;}
 .db-name{font-size:13px;font-weight:700;color:var(--text);}
 
 /* ═══════════════════════ STAFF NOTATION ═══════════════════════ */
-.staff-wrap{padding:8px 16px;overflow-x:auto;scrollbar-width:none;background:var(--bg2);border-radius:var(--radius-sm);margin:0 16px 8px;border:1px solid var(--border);transition:background 0.25s,border-color 0.25s;}
+.staff-wrap{padding:8px 16px;overflow-x:auto;scrollbar-width:none;background:var(--bg2);border-radius:var(--radius-sm);margin:0 16px 8px;border:1px solid var(--border);transition:background 0.25s,border-color 0.25s;display:flex;justify-content:center;}
+.staff-wrap svg{margin:0 auto;}
 .staff-wrap::-webkit-scrollbar{display:none;}
 #staff-svg{display:block;margin:0 auto;}
 
@@ -429,6 +430,8 @@ input,select{font-family:inherit;}
 
 .piano-key.playing{background:linear-gradient(180deg,#7CC8F0 0%,#38A3E0 100%)!important;box-shadow:0 0 10px rgba(56,163,224,0.7)!important;}
 .bkey.piano-key.playing{background:linear-gradient(180deg,#2882BE 0%,#1A6BA0 100%)!important;}
+.piano-key.play-correct{background:linear-gradient(180deg,#7FE89A 0%,#4AC868 100%)!important;box-shadow:0 0 12px rgba(74,200,104,0.8)!important;color:#0a3a18!important;}
+.piano-key.play-wrong{background:linear-gradient(180deg,#FF8080 0%,#E85050 100%)!important;box-shadow:0 0 12px rgba(232,80,80,0.8)!important;color:#fff!important;}
 
 /* ═══════════════════════ VIEW MODE SWITCHER ═══════════════════════ */
 .view-mode-bar{display:flex;gap:6px;padding:10px 14px 8px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--border);}
@@ -1008,20 +1011,28 @@ function playNoteByName(name,octave=4,dur=0.8,vol=0.3){
 function flashKeyOnPlayback(midiNote, durationMs){
   const activePage=document.querySelector('.page.active');
   if(!activePage)return;
-  // Light keyboard key
   const keys=activePage.querySelectorAll('.piano-key[data-midi]');
   const pc=midiNote%12;
+
+  // On the Scales page, colour the key green (in scale) or red (wrong note)
+  let cls='playing';
+  if(activePage.id==='page-scales'){
+    const root=document.getElementById('scale-root')?.value||'C';
+    const type=document.getElementById('scale-type')?.value||'major';
+    const inScale=buildScale(root,type).map(n=>NOTE_IDX[n]).includes(pc);
+    cls=inScale?'play-correct':'play-wrong';
+  }
+
   let exact=false;
   keys.forEach(k=>{ if(parseInt(k.dataset.midi)===midiNote)exact=true; });
   const lit=[];
   keys.forEach(k=>{
     const m=parseInt(k.dataset.midi);
-    if(exact?(m===midiNote):(m%12===pc)){ k.classList.add('playing'); lit.push(k); }
+    if(exact?(m===midiNote):(m%12===pc)){ k.classList.add(cls); lit.push(k); }
   });
-  // Light staff note
   highlightStaffNote(midiNote, true);
   setTimeout(()=>{
-    lit.forEach(k=>k.classList.remove('playing'));
+    lit.forEach(k=>k.classList.remove('playing','play-correct','play-wrong'));
     highlightStaffNote(midiNote, false);
   }, durationMs||300);
 }
@@ -1244,27 +1255,48 @@ function highlightStaffNote(midiNote, on){
   dot.setAttribute('stroke-width','1.5');
   svg.appendChild(dot);
 
-  // Note name + octave label, sitting just to the RIGHT of the note on its own clef
+  // ── Note name shown in a fixed box on the FAR RIGHT of the staff (not over the notes) ──
+  const labelX = W - 8;          // right edge of the staff viewBox
+  const midY = (trebleTop + bassTop + LS*4) / 2;  // vertical centre between staves
+
+  // Background pill for the label
+  const labelBg=document.createElementNS('http://www.w3.org/2000/svg','rect');
+  labelBg.setAttribute('class',id);
+  labelBg.setAttribute('x', labelX-46); labelBg.setAttribute('y', midY-16);
+  labelBg.setAttribute('width','44'); labelBg.setAttribute('height','32');
+  labelBg.setAttribute('rx','6');
+  labelBg.setAttribute('fill', fill); labelBg.setAttribute('opacity','0.15');
+  labelBg.setAttribute('stroke', stroke); labelBg.setAttribute('stroke-width','1.5');
+  svg.appendChild(labelBg);
+
   const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
   lbl.setAttribute('class',id);
-  lbl.setAttribute('x', x+12); lbl.setAttribute('y', y+4);
-  lbl.setAttribute('text-anchor','start');
-  lbl.setAttribute('font-size','13'); lbl.setAttribute('font-weight','800');
+  lbl.setAttribute('x', labelX-24); lbl.setAttribute('y', midY+1);
+  lbl.setAttribute('text-anchor','middle');
+  lbl.setAttribute('font-size','17'); lbl.setAttribute('font-weight','900');
   lbl.setAttribute('fill',fill);
   lbl.setAttribute('font-family','Inter,sans-serif');
   lbl.textContent=names[pc]+(sharp[pc]?'♯':'')+octave;
   svg.appendChild(lbl);
 
-  // Small clef indicator so it's clear which staff the note is on
-  const clefTag=document.createElementNS('http://www.w3.org/2000/svg','text');
-  clefTag.setAttribute('class',id);
-  clefTag.setAttribute('x', x+12); clefTag.setAttribute('y', y+16);
-  clefTag.setAttribute('text-anchor','start');
-  clefTag.setAttribute('font-size','8'); clefTag.setAttribute('font-weight','600');
-  clefTag.setAttribute('fill','var(--text3)');
-  clefTag.setAttribute('font-family','Inter,sans-serif');
-  clefTag.textContent=useBass?'bass':'treble';
-  svg.appendChild(clefTag);
+  // in-scale / wrong tag under the note name
+  const tag=document.createElementNS('http://www.w3.org/2000/svg','text');
+  tag.setAttribute('class',id);
+  tag.setAttribute('x', labelX-24); tag.setAttribute('y', midY+13);
+  tag.setAttribute('text-anchor','middle');
+  tag.setAttribute('font-size','7'); tag.setAttribute('font-weight','700');
+  tag.setAttribute('fill',stroke);
+  tag.setAttribute('font-family','Inter,sans-serif');
+  tag.setAttribute('text-transform','uppercase');
+  if(pageId==='page-scales'){
+    const root2=document.getElementById('scale-root')?.value||'C';
+    const type2=document.getElementById('scale-type')?.value||'major';
+    const inSc=buildScale(root2,type2).map(n=>NOTE_IDX[n]).includes(pc);
+    tag.textContent=inSc?'IN SCALE':'NOT IN SCALE';
+  } else {
+    tag.textContent=useBass?'bass':'treble';
+  }
+  svg.appendChild(tag);
 }
 
 function showMidiNote(midiNote){
@@ -2925,7 +2957,7 @@ document.getElementById('install-yes').addEventListener('click',async()=>{
 document.getElementById('install-no').addEventListener('click',()=>{document.getElementById('install-banner').classList.remove('show');});
 
 // ── App version (bump this each release to match sw.js cache name) ──
-const APP_VERSION='v37';
+const APP_VERSION='v38';
 
 if('serviceWorker' in navigator){
   let refreshing=false;
