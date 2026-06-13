@@ -1154,7 +1154,10 @@ function highlightMidiOnPiano(midiNote,on){
 function highlightStaffNote(midiNote, on){
   const activePage=document.querySelector('.page.active');
   if(!activePage)return;
-  const svg=activePage.querySelector('#scale-staff-svg, #chord-staff-svg, #play-staff-svg');
+  // Find the visible staff SVG on this page
+  let svg=activePage.querySelector('#scale-staff-svg')
+        ||activePage.querySelector('#chord-staff-svg')
+        ||activePage.querySelector('#play-staff-svg');
   if(!svg)return;
   const id='midi-staff-marker';
   svg.querySelectorAll('.'+id).forEach(el=>el.remove());
@@ -1328,10 +1331,7 @@ function buildPianoUI(containerId, highlightedNotes=[], rootNote=null, octaves=2
       const tap=()=>{
         const midi=(oct+1)*12+semitone;
         playNoteByName(note,oct);
-        highlightStaffNote(midi,true);
-        flashKeyOnPlayback(midi,500);
-        clearTimeout(window._staffTapTimer);
-        window._staffTapTimer=setTimeout(()=>highlightStaffNote(midi,false),900);
+        flashKeyOnPlayback(midi,900);
       };
       key.addEventListener('mousedown',tap);
       key.addEventListener('touchstart',e=>{e.preventDefault();tap();},{passive:false});
@@ -1358,10 +1358,7 @@ function buildPianoUI(containerId, highlightedNotes=[], rootNote=null, octaves=2
       const tap=()=>{
         const midi=(oct+1)*12+s;
         playNoteByName(noteName,oct);
-        highlightStaffNote(midi,true);
-        flashKeyOnPlayback(midi,500);
-        clearTimeout(window._staffTapTimer);
-        window._staffTapTimer=setTimeout(()=>highlightStaffNote(midi,false),900);
+        flashKeyOnPlayback(midi,900);
       };
       key.addEventListener('mousedown',tap);
       key.addEventListener('touchstart',e=>{e.preventDefault();tap();},{passive:false});
@@ -1859,6 +1856,9 @@ function updateScale(){
   const baseNotes=buildScale(root,type);
   const sc=SCALES[type];
   const notes8=baseNotes.length>=7?[...baseNotes.slice(0,7),baseNotes[0]]:[...baseNotes,baseNotes[0]];
+  // 2-octave run for the staff: scale notes, then the same notes an octave up, ending on the double octave
+  const oneOctave = baseNotes.length>=7 ? baseNotes.slice(0,7) : baseNotes.slice();
+  const notes16 = [...oneOctave, ...oneOctave, baseNotes[0]];
   const DEG=['Root','2nd','3rd','4th','5th','6th','7th','Oct'];
   const view=scaleViewMode||'standard';
 
@@ -1970,7 +1970,7 @@ function updateScale(){
     requestAnimationFrame(()=>{
       buildMiniCOF('scale-cof-mini', root);
       buildPianoUI('scale-piano', baseNotes, root, 4, 2);
-      drawGrandStaff('scale-staff-svg', notes8);
+      drawGrandStaff('scale-staff-svg', notes16);
     });
   }
 
@@ -1979,7 +1979,7 @@ function updateScale(){
     requestAnimationFrame(()=>{
       const piano=document.getElementById('scale-piano');
       if(piano)buildPianoUI('scale-piano',baseNotes,root,view==='focus'?2:4,2);
-      drawGrandStaff('scale-staff-svg',notes8);
+      drawGrandStaff('scale-staff-svg',notes16);
     });
   }
 }
