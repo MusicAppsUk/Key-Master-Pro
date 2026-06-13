@@ -576,7 +576,7 @@ input,select{font-family:inherit;}
         <div class="chip" onclick="filterKS('flats',this)">Flats</div>
         <div class="chip" onclick="filterKS('none',this)">No accidentals</div>
       </div>
-      <div id="ks-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px;"></div>
+      <div id="ks-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 14px;"></div>
     </div>
 
     <!-- ═══ SCALE EXPLORER ═══ -->
@@ -590,7 +590,7 @@ input,select{font-family:inherit;}
         <button class="vm-btn" id="vm-scale-tabbed"   onclick="setScaleView('tabbed',this)">Tabbed</button>
         <button class="vm-btn" id="vm-scale-collapsed" onclick="setScaleView('collapsed',this)">Collapsible</button>
         <button class="vm-btn" id="vm-scale-focus"    onclick="setScaleView('focus',this)">Focus</button>
-        <button class="vm-btn" id="vm-scale-split"    onclick="setScaleView('split',this)">Split</button>
+        <button class="vm-btn" id="vm-scale-split"    onclick="setScaleView('split',this)">Stave + Keys</button>
         <button class="vm-btn" id="vm-scale-circle"   onclick="setScaleView('circle',this)">⭕ Circle</button>
       </div>
       <!-- Key selectors — always visible -->
@@ -1169,10 +1169,10 @@ function highlightStaffNote(midiNote, on){
   const baseStep={'C':0,'D':1,'E':2,'F':3,'G':4,'A':5,'B':6}[names[pc]];
   const step=(octave-4)*7 + baseStep;
 
-  // Geometry mirrors drawGrandStaff: LS=9, trebleTop=16
-  const LS=9, trebleTop=16;
+  // Geometry mirrors drawGrandStaff: LS=9, trebleTop=18
+  const LS=9, trebleTop=18;
   const trebleBottomY=trebleTop+LS*4;
-  const y=trebleBottomY-(step+2)*(LS/2);
+  const y=trebleBottomY-(step-2)*(LS/2);
   const x=svg.getAttribute('width')*0.5 || 180;
 
   const dot=document.createElementNS('http://www.w3.org/2000/svg','ellipse');
@@ -1444,14 +1444,15 @@ function drawGrandStaff(svgId, notes, chordMode=false){
 
   // ── Middle C ledger line position ──
   const trebleBottomY = trebleTop + LS*4;  // y of bottom treble line = E4
-  const middleCY = trebleBottomY + LS;     // middle C ledger = one space below E4
+  const middleCY = trebleBottomY + LS;     // middle C (C4) ledger = one line-space below E4 bottom line
 
   // Helper: step-to-Y
   // step 0=C4, each diatonic step = LS/2 = 4px upward
   // trebleBottom = E4 = step -2 → trebleBottomY = trebleTop+4*LS
   // So step s → y = trebleBottomY - (s+2)*(LS/2)
   function stepToY(step){
-    return trebleBottomY - (step+2)*(LS/2);
+    // step 0 = C4 (one ledger below treble). E4 (step 2) sits on the bottom treble line.
+    return trebleBottomY - (step-2)*(LS/2);
   }
 
   // ── Render each note ──
@@ -1784,12 +1785,13 @@ function buildKSGrid(filter){
     const sig=sigDisplay(key.sharps,key.flats);
     const scale=buildScale(key.major,'major');
     const card=document.createElement('div');
-    card.className='card';card.style.cursor='pointer';
+    card.className='card';
+    card.style.cssText='cursor:pointer;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;text-align:center;';
     card.innerHTML=`
-      <div style="font-size:18px;font-weight:800;color:${KEY_COLORS[i]}">${key.major}</div>
-      <div style="font-size:12px;color:var(--text2);margin-top:2px;">Rel: ${key.minor}</div>
-      <div style="font-size:11px;font-weight:700;color:var(--gold);margin-top:6px;">${sig.label}</div>
-      <div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:5px;">${sig.items.map(s=>`<span style="padding:2px 5px;background:var(--bg3);border-radius:4px;font-size:10px;color:var(--text2)">${s}</span>`).join('')}</div>
+      <div style="font-size:30px;font-weight:900;color:${KEY_COLORS[i]};line-height:1;">${key.major}</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);line-height:1;">${key.minor}<span style="font-size:10px;color:var(--text3);font-weight:600;"> min</span></div>
+      <div style="font-size:10px;font-weight:700;color:var(--gold);margin-top:2px;">${sig.label}</div>
+      ${sig.items.length?`<div style="font-size:11px;color:var(--text2);font-weight:600;line-height:1;">${sig.items.join(' ')}</div>`:''}
     `;
     card.addEventListener('click',()=>{
       document.querySelectorAll('#ks-grid .card').forEach(c=>c.style.borderColor='var(--border)');
@@ -1913,30 +1915,13 @@ function updateScale(){
       ${playHTML}`;
   }
   else if(view==='split'){
-    const paSong=window.paSong||'';
+    // 'Stave + Keys' — clean full-width: degrees, large staff in the middle, big keyboard below
     container.innerHTML=`
-      <div class="split-app-half">
-        ${degHTML}
-        <div class="piano-wrap" style="padding:6px 16px 4px;"><div class="piano-keyboard" id="scale-piano"></div></div>
-        <div style="staff-wrap"><svg id="scale-staff-svg" width="360" height="120" style="display:block;margin:0 16px 4px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);"></svg></div>
-      </div>
-      <div class="split-divider-bar">
-        <span>⋯ drag to resize ⋯</span>
-      </div>
-      <div class="split-web-half">
-        <div class="split-web-tabs">
-          <div class="split-web-tab active" onclick="splitSetTab('yt',this)">▶ YouTube</div>
-          <div class="split-web-tab chord" onclick="splitSetTab('chord',this)">Chordify</div>
-          <div class="split-web-tab chord" onclick="splitSetTab('guitar',this)">Guitar</div>
-        </div>
-        <div class="split-web-content" id="split-web-content">
-          <input class="split-search" id="split-search" placeholder="Search a song…" value="${paSong}" onkeydown="if(event.key==='Enter')splitOpen('yt')"/>
-          <button class="split-yt-btn" onclick="splitOpen('yt')">
-            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-            Open in YouTube
-          </button>
-        </div>
-      </div>`;
+      ${degHTML}
+      ${infoHTML}
+      <div class="staff-wrap" style="margin:4px 0;"><svg id="scale-staff-svg" width="360" height="240"></svg></div>
+      <div class="piano-wrap" style="padding:8px 12px 12px;"><div class="piano-keyboard" id="scale-piano"></div></div>
+      ${playHTML}`;
   }
   else if(view==='circle'){
     container.innerHTML=`
@@ -3671,10 +3656,10 @@ function drawProperStaff(){
   const NOTE_ORDER_P=['C','D','E','F','G','A','B'];
   const BASS_STEPS={'C':0,'D':1,'E':2,'F':3,'G':4,'A':5,'B':6};
 
-  // step→y for treble staff: step 0=C4, each step = LS/2 upward
-  function trebleY(step){ return TREBLE_BOT-(step+2)*(LS/2); }
-  // step→y for bass staff: step 0=C3
-  function bassY(step){ return BASS_BOT-(step+2)*(LS/2); }
+  // step→y for treble staff: step 0=C4. E4 (step 2) sits on the bottom line.
+  function trebleY(step){ return TREBLE_BOT-(step-2)*(LS/2); }
+  // step→y for bass staff: step 0=C3. G2 (step -3) sits on the bottom line.
+  function bassY(step){ return BASS_BOT-(step+3)*(LS/2); }
   // Note name → diatonic step relative to C4 (treble) or C3 (bass)
   function noteStep(nm,oct,base_oct){
     const b=nm.replace(/[♯♭]/g,'');
