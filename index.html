@@ -1154,14 +1154,12 @@ function highlightMidiOnPiano(midiNote,on){
 function highlightStaffNote(midiNote, on){
   const activePage=document.querySelector('.page.active');
   if(!activePage)return;
-  const svg=activePage.querySelector('#scale-staff-svg, #chord-staff-svg');
+  const svg=activePage.querySelector('#scale-staff-svg, #chord-staff-svg, #play-staff-svg');
   if(!svg)return;
   const id='midi-staff-marker';
-  // remove existing markers first
   svg.querySelectorAll('.'+id).forEach(el=>el.remove());
   if(!on)return;
 
-  // Map MIDI note to staff Y using same system as drawGrandStaff
   const names=['C','C','D','D','E','F','F','G','G','A','A','B'];
   const sharp=[false,true,false,true,false,false,true,false,true,false,true,false];
   const pc=midiNote%12;
@@ -1169,31 +1167,51 @@ function highlightStaffNote(midiNote, on){
   const baseStep={'C':0,'D':1,'E':2,'F':3,'G':4,'A':5,'B':6}[names[pc]];
   const step=(octave-4)*7 + baseStep;
 
-  // Geometry mirrors drawGrandStaff: LS=9, trebleTop=18
+  // ── Scale-aware colour (Scales page practice feature) ──
+  // Gold if the played pitch-class is in the current scale, red if it's not.
+  let fill='#4AC868', stroke='#2a9a4a';  // default green (Play page / chords)
+  const pageId=activePage.id;
+  if(pageId==='page-scales'){
+    const root=document.getElementById('scale-root')?.value||'C';
+    const type=document.getElementById('scale-type')?.value||'major';
+    const scaleNotes=buildScale(root,type);
+    const scalePCs=scaleNotes.map(n=>NOTE_IDX[n]);
+    const inScale=scalePCs.includes(pc);
+    if(inScale){ fill='#F0C040'; stroke='#C8982A'; }   // gold = correct, in scale
+    else { fill='#E85050'; stroke='#C82020'; }         // red = wrong note
+  }
+
   const LS=9, trebleTop=18;
   const trebleBottomY=trebleTop+LS*4;
   const y=trebleBottomY-(step-2)*(LS/2);
-  const x=svg.getAttribute('width')*0.5 || 180;
+  const W=parseInt(svg.getAttribute('width'))||svg.viewBox?.baseVal?.width||360;
+  const x=W*0.5;
+
+  // Ledger line for middle C / out-of-staff notes
+  if(step===0||step===-1){
+    const ll=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ll.setAttribute('class',id);
+    ll.setAttribute('x1',x-10);ll.setAttribute('x2',x+10);
+    ll.setAttribute('y1',trebleBottomY+LS);ll.setAttribute('y2',trebleBottomY+LS);
+    ll.setAttribute('stroke',stroke);ll.setAttribute('stroke-width','1');
+    svg.appendChild(ll);
+  }
 
   const dot=document.createElementNS('http://www.w3.org/2000/svg','ellipse');
   dot.setAttribute('class',id);
-  dot.setAttribute('cx', x);
-  dot.setAttribute('cy', y);
-  dot.setAttribute('rx','6'); dot.setAttribute('ry','4.5');
-  dot.setAttribute('fill','#4AC868');
-  dot.setAttribute('stroke','#2a9a4a');
+  dot.setAttribute('cx', x); dot.setAttribute('cy', y);
+  dot.setAttribute('rx','7'); dot.setAttribute('ry','5');
+  dot.setAttribute('fill',fill);
+  dot.setAttribute('stroke',stroke);
   dot.setAttribute('stroke-width','1.5');
   svg.appendChild(dot);
 
-  // note label
   const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
   lbl.setAttribute('class',id);
-  lbl.setAttribute('x', x);
-  lbl.setAttribute('y', 14);
+  lbl.setAttribute('x', x); lbl.setAttribute('y', 14);
   lbl.setAttribute('text-anchor','middle');
-  lbl.setAttribute('font-size','11');
-  lbl.setAttribute('font-weight','700');
-  lbl.setAttribute('fill','#4AC868');
+  lbl.setAttribute('font-size','12'); lbl.setAttribute('font-weight','800');
+  lbl.setAttribute('fill',fill);
   lbl.setAttribute('font-family','Inter,sans-serif');
   lbl.textContent=names[pc]+(sharp[pc]?'♯':'')+octave;
   svg.appendChild(lbl);
@@ -1307,7 +1325,14 @@ function buildPianoUI(containerId, highlightedNotes=[], rootNote=null, octaves=2
       key.style.cssText=`position:absolute;left:${wi*36}px;width:34px;`;
       key.textContent=(isRoot||inScale)?note:'';
 
-      const tap=()=>{playNoteByName(note,oct);};
+      const tap=()=>{
+        const midi=(oct+1)*12+semitone;
+        playNoteByName(note,oct);
+        highlightStaffNote(midi,true);
+        flashKeyOnPlayback(midi,500);
+        clearTimeout(window._staffTapTimer);
+        window._staffTapTimer=setTimeout(()=>highlightStaffNote(midi,false),900);
+      };
       key.addEventListener('mousedown',tap);
       key.addEventListener('touchstart',e=>{e.preventDefault();tap();},{passive:false});
       octaveDiv.appendChild(key);
@@ -1330,7 +1355,14 @@ function buildPianoUI(containerId, highlightedNotes=[], rootNote=null, octaves=2
       key.style.cssText=`left:${offset}px;`;
       key.textContent=(isRoot||inScale)?displayName:'';
 
-      const tap=()=>{playNoteByName(noteName,oct);};
+      const tap=()=>{
+        const midi=(oct+1)*12+s;
+        playNoteByName(noteName,oct);
+        highlightStaffNote(midi,true);
+        flashKeyOnPlayback(midi,500);
+        clearTimeout(window._staffTapTimer);
+        window._staffTapTimer=setTimeout(()=>highlightStaffNote(midi,false),900);
+      };
       key.addEventListener('mousedown',tap);
       key.addEventListener('touchstart',e=>{e.preventDefault();tap();},{passive:false});
       octaveDiv.appendChild(key);
